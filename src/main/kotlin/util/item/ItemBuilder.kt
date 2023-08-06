@@ -1,13 +1,19 @@
-package util
+package util.item
 
-import FuxelSagt
+import com.mojang.authlib.GameProfile
+import com.mojang.authlib.properties.Property
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.persistence.PersistentDataType
+import java.lang.reflect.Field
+import java.util.*
+
 
 class ItemBuilder() {
     private lateinit var itemStack: ItemStack
@@ -120,20 +126,45 @@ class ItemBuilder() {
         return removePersistentDataContainer(getNameSpaceKey(key))
     }
 
-    fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<Any, Any>, value: Any): ItemBuilder{
+    fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<Any, Any>, value: Any): ItemBuilder { //TODO: Any doesn't work
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.set(key, type, value)
         return this
     }
 
-    fun removePersistentDataContainer(key: NamespacedKey): ItemBuilder{
+    fun removePersistentDataContainer(key: NamespacedKey): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.remove(key)
         return this
     }
 
+    fun setSkullOwner(name: String): ItemBuilder {
+        if (itemStack.itemMeta !is SkullMeta) return this
+        val itemMeta = itemStack.itemMeta as SkullMeta
+        itemMeta.setOwningPlayer(Bukkit.getOfflinePlayer(name)) //TODO
+        itemStack.setItemMeta(itemMeta)
+        return this
+    }
+
+    fun setSkullOwnerWithURL(url: String): ItemBuilder {
+        if (itemStack.itemMeta !is SkullMeta) return this
+        val meta: SkullMeta = itemStack.itemMeta as SkullMeta
+        val finalUrl = "https://textures.minecraft.net/texture/$url"
+        val gameProfile = GameProfile(UUID.randomUUID(), null)
+        val data = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", finalUrl).toByteArray())
+        gameProfile.getProperties().put("textures", Property("textures", String(data)))
+        try {
+            val field: Field = meta.javaClass.getDeclaredField("profile")
+            field.setAccessible(true)
+            field[meta] = gameProfile
+            field.setAccessible(false)
+        } catch (ignored: Exception) {
+        }
+        return this
+    }
+
     private fun getNameSpaceKey(key: String): NamespacedKey{
-        return NamespacedKey("fuxelsagt.namespacedKey", key)
+        return NamespacedKey("fuxelsagt.item", key)
     }
 
     fun build(): ItemStack {

@@ -3,22 +3,24 @@ package util.gui
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import util.ItemBuilder
+import util.item.ItemBuilder
 import kotlin.math.ceil
 
 abstract class PageGUI(private val guiName: String = "Name not set") : IGUI {
     private val page: Int = 0
-    private val itemsPerPage: Int = 9*5
+    private val itemsPerPage: Int = 9 * 5
+    private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.item", key)
 
     fun getPage(): Int {
         return page
     }
 
-    fun getPageCount(): Int{
+    fun getPageCount(): Int {
         return ceil(getContent().size.div(itemsPerPage.coerceAtLeast(1).toFloat())).toInt()
     }
 
@@ -40,7 +42,7 @@ abstract class PageGUI(private val guiName: String = "Name not set") : IGUI {
             inventory.setItem(i, itemsOnPage[i])
         }
 
-        for (i in (this.itemsPerPage)..(this.itemsPerPage+9)){
+        for (i in (this.itemsPerPage)..(this.itemsPerPage + 9)) {
             inventory.setItem(
                 i,
                 ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
@@ -50,10 +52,16 @@ abstract class PageGUI(private val guiName: String = "Name not set") : IGUI {
         }
 
         if (getPage() != 0) { //if not first page
-            inventory.setItem(5*9 + 1, ItemBuilder(Material.ARROW).setName("Zurück").build())//nbt
+            inventory.setItem(
+                5 * 9 + 1, ItemBuilder(Material.ARROW)
+                    .setName("Zurück")
+                    .setSkullOwnerWithURL("86e145e71295bcc0488e9bb7e6d6895b7f969a3b5bb7eb34a52e932bc84df5b")
+//                .addPersistentDataContainer(getPageGUIKey("type"), PersistentDataType.STRING, "back")
+                    .build()
+            )
         }
         if (getPage() + 1 != getPageCount()) { //if not last page
-            inventory.setItem(5*9 + 7, ItemBuilder(Material.ARROW).setName("Weiter").build())//nbt
+            inventory.setItem(5 * 9 + 7, ItemBuilder(Material.ARROW).setName("Weiter").build())//nbt
         }
 
         return inventory

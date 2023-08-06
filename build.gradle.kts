@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
+    compileOnly("com.mojang:authlib:3.11.50")
     implementation("com.google.code.gson:gson:2.10.1")
 
     testImplementation(kotlin("test"))
