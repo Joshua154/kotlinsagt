@@ -10,4 +10,3 @@ interface IGUI : InventoryHolder {  // Interface Graphical User Interface
     fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
     fun open(player: Player)
 }
-
