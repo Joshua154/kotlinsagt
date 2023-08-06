@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class GUIEH : Listener {
+class GUIEH : Listener {  // Graphical User Interface Event Handler
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         if (event.inventory.holder !is IGUI) return
