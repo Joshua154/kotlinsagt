@@ -6,7 +6,8 @@ import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
 
-interface IGUI : InventoryHolder {
-    fun onClick(player: Player?, slot: Int, clickedItem: ItemStack?, clickType: ClickType?)
+interface IGUI : InventoryHolder {  // Interface Graphical User Interface
+    fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
+    fun open(player: Player)
 }
 
