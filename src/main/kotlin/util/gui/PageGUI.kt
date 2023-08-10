@@ -15,7 +15,8 @@ import kotlin.math.ceil
 abstract class PageGUI(private val guiTitle: Component = Component.text("Name not set")) : IGUI {
     private var page: Int = 0
     private val itemsPerPage: Int = 9 * 5
-    private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.pageGUI.item", key)
+    private lateinit var player: Player
+    private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.pagegui.item", key)
 
     private fun getPage(): Int {
         return page
@@ -36,12 +37,13 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         if(page > getPageCount()) page = getPageCount() - 1
 
         onPageSwitch()
+        refresh()
     }
 
     private fun getItemsFromPage(page: Int): List<ItemStack> {
         return getContent().subList(
             page * itemsPerPage,
-            ((page + 1) * itemsPerPage - 1).coerceAtMost(getContent().size)
+            ((page + 1) * itemsPerPage).coerceAtMost(getContent().size)
         )
     }
 
@@ -50,11 +52,13 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
 
         val itemsOnPage: List<ItemStack> = getItemsFromPage(this.page)
 
-        for (i in 0..<itemsPerPage) {
-            inventory.setItem(i, itemsOnPage[i])
+        for (i in 0..<itemsPerPage + 1) {
+            if(i < itemsOnPage.size) {
+                inventory.setItem(i, itemsOnPage[i])
+            }
         }
 
-        for (i in (this.itemsPerPage)..(this.itemsPerPage + 9)) {
+        for (i in (this.itemsPerPage)..(this.itemsPerPage + 8)) {
             inventory.setItem(
                 i,
                 ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
@@ -100,6 +104,11 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
     }
 
     override fun open(player: Player) {
+        player.openInventory(inventory)
+        this.player = player
+    }
+
+    fun refresh() {
         player.openInventory(inventory)
     }
 

@@ -15,12 +15,12 @@ import java.util.ArrayList
 import java.util.UUID
 
 class TeleportGUI(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Teleporter")) {
-    private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.pageGUI.item", key)
+    private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.pagegui.item", key)
 
     private fun genClickableItem(player: Player): ItemStack{
         return ItemBuilder(Material.PLAYER_HEAD)
             .setSkullOwner(player)
-            .addPersistentDataContainer(getPageGUIKey("playerName"), UUIDDataType(), player.uniqueId)
+            .addPersistentDataContainer(getPageGUIKey("player_name"), UUIDDataType(), player.uniqueId)
             .setName(Component.text(player.name))
             .build()
     }
@@ -29,12 +29,13 @@ class TeleportGUI(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Teleporter
         return fuxelSagt.server.onlinePlayers.stream()
             .sorted { player, player2 -> player.name.compareTo(player2.name) }
             .map { player -> genClickableItem(player) }.toList()
+//        return Material.entries.filter { material: Material -> material.isItem }.map { material: Material -> ItemStack(material) }
     }
 
     override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
         if(clickedItem == null) return
         val container = clickedItem.itemMeta.persistentDataContainer
-        val key: NamespacedKey = getPageGUIKey("playerName")
+        val key: NamespacedKey = getPageGUIKey("player_name")
         if(container.has(key) && container.get(key, UUIDDataType()) != null){
             val teleportToPlayer = fuxelSagt.server.getPlayer(container.get(key, UUIDDataType())!!) ?: return
 

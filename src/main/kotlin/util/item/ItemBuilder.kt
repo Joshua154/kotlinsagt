@@ -126,12 +126,14 @@ class ItemBuilder() {
     fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<String, String>, value: String): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.set(key, type, value)
+        itemStack.setItemMeta(itemMeta)
         return this
     }
 
     fun addPersistentDataContainer(key: NamespacedKey, type: UUIDDataType, value: UUID): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.set(key, type, value)
+        itemStack.setItemMeta(itemMeta)
         return this
     }
 
@@ -142,6 +144,7 @@ class ItemBuilder() {
     fun removePersistentDataContainer(key: NamespacedKey): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.remove(key)
+        itemStack.setItemMeta(itemMeta)
         return this
     }
 
