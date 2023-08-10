@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
@@ -118,19 +119,25 @@ class ItemBuilder() {
         return this
     }
 
-    fun addPersistentDataContainer(key: String, type: PersistentDataType<Any, Any>, value: Any): ItemBuilder {
-        return addPersistentDataContainer(getNameSpaceKey(key), type, value)
-    }
+//    fun addPersistentDataContainer(key: String, type: PersistentDataType<String, String>, value: String): ItemBuilder {
+//        return addPersistentDataContainer(getNameSpaceKey(key), type, value)
+//    }
 
-    fun removePersistentDataContainer(key: String): ItemBuilder {
-        return removePersistentDataContainer(getNameSpaceKey(key))
-    }
-
-    fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<Any, Any>, value: Any): ItemBuilder { //TODO: Any doesn't work
+    fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<String, String>, value: String): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.set(key, type, value)
         return this
     }
+
+    fun addPersistentDataContainer(key: NamespacedKey, type: UUIDDataType, value: UUID): ItemBuilder {
+        val itemMeta = itemStack.itemMeta
+        itemMeta.persistentDataContainer.set(key, type, value)
+        return this
+    }
+
+//    fun removePersistentDataContainer(key: String): ItemBuilder {
+//        return removePersistentDataContainer(getNameSpaceKey(key))
+//    }
 
     fun removePersistentDataContainer(key: NamespacedKey): ItemBuilder {
         val itemMeta = itemStack.itemMeta
@@ -138,10 +145,22 @@ class ItemBuilder() {
         return this
     }
 
+    fun hasPersistentDataContainer(key: NamespacedKey): Boolean {
+        return itemStack.itemMeta.persistentDataContainer.has(key)
+    }
+
     fun setSkullOwner(name: String): ItemBuilder {
         if (itemStack.itemMeta !is SkullMeta) return this
         val itemMeta = itemStack.itemMeta as SkullMeta
-        itemMeta.setOwningPlayer(Bukkit.getOfflinePlayer(name)) //TODO
+        itemMeta.setOwningPlayer(Bukkit.getOfflinePlayer(name))
+        itemStack.setItemMeta(itemMeta)
+        return this
+    }
+
+    fun setSkullOwner(player: Player): ItemBuilder {
+        if (itemStack.itemMeta !is SkullMeta) return this
+        val itemMeta = itemStack.itemMeta as SkullMeta
+        itemMeta.setOwningPlayer(player)
         itemStack.setItemMeta(itemMeta)
         return this
     }

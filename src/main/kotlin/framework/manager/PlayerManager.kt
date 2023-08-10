@@ -2,8 +2,6 @@ package framework.manager
 
 import framework.Framework
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player
 import java.util.Optional
 import java.util.UUID
