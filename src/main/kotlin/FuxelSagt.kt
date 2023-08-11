@@ -12,6 +12,7 @@ class FuxelSagt : JavaPlugin() {
 
     private var framework = Framework(this);
     private lateinit var config: Config
+    lateinit var testMode: GameMode
 
     override fun onEnable() {
         config = Config.fromFile(File("config.json"))
@@ -19,8 +20,8 @@ class FuxelSagt : JavaPlugin() {
         registerListeners()
         registerCommands()
 
-        val mode1 = TNTRun(framework, "tntRun")
-        mode1.start()
+        this.testMode = TNTRun(framework, "tntRun")
+        this.testMode.start()
     }
 
     override fun onDisable() {
@@ -28,7 +29,7 @@ class FuxelSagt : JavaPlugin() {
     }
 
     private fun registerCommands() {
-        getCommand("testcommand")?.setExecutor(TestCommand(server))
+        getCommand("testcommand")?.setExecutor(TestCommand(this))
     }
 
     private fun registerListeners() {
@@ -40,6 +41,4 @@ class FuxelSagt : JavaPlugin() {
     fun getConfiguration(): Config {
         return this.config;
     }
-
-
 }
