@@ -10,12 +10,13 @@ import java.io.File
 
 class FuxelSagt : JavaPlugin() {
 
-    private var framework = Framework(this);
+    private lateinit var framework: Framework
     private lateinit var config: Config
     lateinit var testMode: GameMode
 
     override fun onEnable() {
         config = Config.fromFile(File("config.json"))
+        this.framework = Framework(this)
 
         registerListeners()
         registerCommands()

@@ -2,20 +2,20 @@ package util.configuration
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import framework.manager.MessageContainer
+import framework.manager.MessageManager
+import framework.manager.MessageType
+import org.apache.logging.log4j.message.Message
 import java.io.File
 
 class Config {
 
     class Settings {
     }
-    
-    class Messages {
-        val prefix: String = "FuxelSagt";
-    }
 
     val settings: Settings = Settings()
 
-    val messages: Messages = Messages()
+    val messages = arrayOf(MessageContainer(MessageType.PREFIX, "FuxelSagt"))
 
     //Reading & Converting
     companion object {
