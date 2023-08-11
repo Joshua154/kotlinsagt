@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 class JoinListener(val fuxelSagt: FuxelSagt): Listener {
 
-
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         // fuxelsagt.getTablistManager().sendTablistToPlayer(event.player)

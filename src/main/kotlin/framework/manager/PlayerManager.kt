@@ -2,11 +2,12 @@ package framework.manager
 
 import framework.Framework
 import net.kyori.adventure.text.Component
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import java.util.Optional
 import java.util.UUID
 
-class PlayerManager(framework: Framework) {
+class PlayerManager(private val framework: Framework) {
     private var players = ArrayList<UUID>()
     private var spectators = ArrayList<UUID>()
     private var fuxel: Optional<UUID> = Optional.empty()
@@ -86,6 +87,7 @@ class PlayerManager(framework: Framework) {
     fun killPlayer(player: UUID) {
         if (!this.players.remove(player)) return;
         this.spectators.add(player);
+        framework.getFuxelSagt().server.getPlayer(player)?.gameMode ?: GameMode.SPECTATOR
         // broadcast
     }
 
