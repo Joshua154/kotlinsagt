@@ -24,7 +24,7 @@ abstract class GameMode(private val framework: Framework, private val worldName:
             .generatorSettings("{\"biome\": \"minecraft:the_void\"," +
                                 "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
                                             "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
-                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]\"}")
+                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}")
             .createWorld()
         fuxelSagt.server.worlds.add(world)
     }
