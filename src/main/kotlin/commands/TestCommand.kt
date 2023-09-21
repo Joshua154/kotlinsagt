@@ -13,7 +13,7 @@ class TestCommand(private val fuxelSagt: FuxelSagt): CommandExecutor {
             return false
         }
         val testMode = fuxelSagt.testMode
-        testMode.addPlayer(sender)
+        testMode.addPlayers(sender)
         testMode.tpPlayersToGame(sender)
         return true
     }

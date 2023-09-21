@@ -84,6 +84,12 @@ class PlayerManager(private val framework: Framework) {
 
     // Worker-Methods
 
+    fun playerLoose(player: Player) {
+        if (!this.players.remove(player.uniqueId)) return;
+        this.spectators.add(player.uniqueId)
+        // broadcast
+    }
+
     fun killPlayer(player: UUID) {
         if (!this.players.remove(player)) return;
         this.spectators.add(player);

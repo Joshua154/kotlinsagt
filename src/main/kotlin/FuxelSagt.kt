@@ -22,7 +22,7 @@ class FuxelSagt : JavaPlugin() {
         registerCommands()
 
         this.testMode = TNTRun(framework, "tntRun")
-        this.testMode.start()
+        this.testMode.prepare()
     }
 
     override fun onDisable() {
