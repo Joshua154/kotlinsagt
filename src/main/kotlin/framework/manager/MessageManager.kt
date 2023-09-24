@@ -20,7 +20,7 @@ public enum class MessageType {
 
 class MessageManager(private val framework: Framework) {
 
-    private val messages: Array<MessageContainer> = this.framework.getFuxelSagt().getConfiguration().messages
+//    private val messages: Array<MessageContainer> = this.framework.getFuxelSagt().getConfiguration().messages
 
 
 

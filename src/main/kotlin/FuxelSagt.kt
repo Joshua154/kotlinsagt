@@ -1,6 +1,7 @@
 import commands.TestCommand
 import framework.Framework
 import framework.gamemodes.GameMode
+import framework.gamemodes.Sammelwahn
 import framework.gamemodes.TNTRun
 import framework.manager.GameModeManager
 import listener.JoinListener
@@ -12,12 +13,12 @@ import java.io.File
 class FuxelSagt : JavaPlugin() {
 
     private lateinit var framework: Framework
-    private lateinit var config: Config
+//    private lateinit var config: Config
     private lateinit var gameModeManager: GameModeManager
     lateinit var testMode: GameMode
 
     override fun onEnable() {
-        config = Config.fromFile(File("config.json"))
+//        config = Config.fromFile(File("config.json"))
         this.framework = Framework(this)
         this.gameModeManager = GameModeManager(this.framework)
 
@@ -42,11 +43,12 @@ class FuxelSagt : JavaPlugin() {
 
     private fun registerGameModes(){
         gameModeManager.addGameMode(TNTRun(framework))
+        gameModeManager.addGameMode(Sammelwahn(framework))
     }
 
-    fun getConfiguration(): Config {
-        return this.config;
-    }
+//    fun getConfiguration(): Config {
+//        return this.config;
+//    }
 
     fun getGameModeManager(): GameModeManager{
         return this.gameModeManager

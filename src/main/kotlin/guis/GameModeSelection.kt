@@ -3,6 +3,8 @@ package guis
 import FuxelSagt
 import framework.gamemodes.GameMode
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -17,7 +19,9 @@ class GameModeSelection(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Game
 
     private fun genGameModeItem(gameMode: GameMode): ItemStack {
         return ItemBuilder(gameMode.displayItem)
-            .addPersistentDataContainer(getPageGUIKey("game_mode_name"), PersistentDataType.STRING, gameMode.displayName)
+            .setLore(30, Component.text(gameMode.description).color(NamedTextColor.GRAY))
+            .setNameCentered(Component.text(gameMode.displayName).color(NamedTextColor.WHITE))
+            .addPersistentDataContainer(getPageGUIKey("game_mode_name"), PersistentDataType.STRING, gameMode.name)
             .build()
     }
 
@@ -30,8 +34,10 @@ class GameModeSelection(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Game
     override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
         if(clickedItem == null) return
 
-        val name: String = clickedItem.itemMeta.persistentDataContainer.get(getPageGUIKey("game_mode_name"), PersistentDataType.STRING) ?: return
-        val gameMode: GameMode = fuxelSagt.getGameModeManager().getGameModeByName(name) ?: return
+        val name: String = clickedItem.itemMeta.persistentDataContainer.get(getPageGUIKey("game_mode_name"), PersistentDataType.STRING) ?: return println("No name found")
+        val gameMode: GameMode = fuxelSagt.getGameModeManager().getGameModeByName(name) ?: return println("No game mode found")
+
+        player.closeInventory()
 
         fuxelSagt.getGameModeManager().setActiveGameMode(gameMode)
 

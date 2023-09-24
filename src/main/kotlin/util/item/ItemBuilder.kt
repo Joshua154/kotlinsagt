@@ -3,6 +3,8 @@ package util.item
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -40,6 +42,27 @@ class ItemBuilder() {
 
     fun setName(name: String?): ItemBuilder {
         this.setName(Component.text(name!!))
+        return this
+    }
+
+    fun setNameCentered(name: TextComponent): ItemBuilder {
+        val textLength = name.content().length
+        val maxLength = this.itemStack.itemMeta.lore()
+            ?.maxOfOrNull { line -> PlainTextComponentSerializer.plainText().serialize(line).length } ?: 0
+
+        println(name.content())
+        println("textLength $textLength")
+        println("maxLength $maxLength")
+        val n = (maxLength - textLength) / 2
+        println("calc ${n.coerceAtLeast(0)}")
+
+
+        setName(Component.text(" ".repeat((n + n * 1/3).coerceAtLeast(0))).append(name))
+        return this
+    }
+
+    fun setNameCentered(name: String?): ItemBuilder {
+        this.setNameCentered(Component.text(name!!))
         return this
     }
 
@@ -90,11 +113,7 @@ class ItemBuilder() {
     }
 
     fun setLore(vararg lore: String?): ItemBuilder {
-        val loreList = ArrayList<Component>()
-        for (line in lore) {
-            loreList.add(Component.text(line!!))
-        }
-        this.setLore(loreList)
+        setLore(lore.map { line -> Component.text(line!!) })
         return this
     }
 
@@ -103,6 +122,41 @@ class ItemBuilder() {
         itemMeta.lore(lore)
         itemStack.setItemMeta(itemMeta)
         return this
+    }
+
+    fun setLore(maxLength: Int, lore: TextComponent): ItemBuilder {
+        val lines = splitString(lore.content(), maxLength)
+        setLore(lines.map { line -> lore.content(line) })
+        return this
+    }
+
+    fun setLore(maxLength: Int, lore: String): ItemBuilder {
+        setLore(splitString(lore, maxLength).map { line -> Component.text(line) })
+        return this
+    }
+
+    private fun splitString(input: String, maxLength: Int): List<String> {
+        val words = input.split(" ")
+        val result = mutableListOf<String>()
+        var currentString = ""
+
+        for (word in words) {
+            if (currentString.isEmpty()) {
+                currentString = word
+            } else {
+                val potentialString = "$currentString $word"
+                if (potentialString.length <= maxLength) {
+                    currentString = potentialString
+                } else {
+                    result.add(currentString)
+                    currentString = word
+                }
+            }
+        }
+        if (currentString.isNotEmpty()) {
+            result.add(currentString)
+        }
+        return result
     }
 
     fun setCustomModelData(data: Int): ItemBuilder {
