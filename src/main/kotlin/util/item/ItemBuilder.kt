@@ -57,7 +57,7 @@ class ItemBuilder() {
         println("calc ${n.coerceAtLeast(0)}")
 
 
-        setName(Component.text(" ".repeat((n + n * 1/3).coerceAtLeast(0))).append(name))
+        setName(Component.text(" ".repeat((n + n * 1 / 3).coerceAtLeast(0))).append(name))
         return this
     }
 
@@ -177,7 +177,11 @@ class ItemBuilder() {
 //        return addPersistentDataContainer(getNameSpaceKey(key), type, value)
 //    }
 
-    fun addPersistentDataContainer(key: NamespacedKey, type: PersistentDataType<String, String>, value: String): ItemBuilder {
+    fun addPersistentDataContainer(
+        key: NamespacedKey,
+        type: PersistentDataType<String, String>,
+        value: String
+    ): ItemBuilder {
         val itemMeta = itemStack.itemMeta
         itemMeta.persistentDataContainer.set(key, type, value)
         itemStack.setItemMeta(itemMeta)
@@ -239,7 +243,7 @@ class ItemBuilder() {
         return this
     }
 
-    private fun getNameSpaceKey(key: String): NamespacedKey{
+    private fun getNameSpaceKey(key: String): NamespacedKey {
         return NamespacedKey("fuxelsagt.item", key)
     }
 

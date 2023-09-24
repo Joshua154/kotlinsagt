@@ -6,14 +6,13 @@ import framework.gamemodes.TNTRun
 import framework.manager.GameModeManager
 import listener.JoinListener
 import org.bukkit.plugin.java.JavaPlugin
-import util.configuration.Config
 import util.gui.GUIEH
-import java.io.File
 
 class FuxelSagt : JavaPlugin() {
 
     private lateinit var framework: Framework
-//    private lateinit var config: Config
+
+    //    private lateinit var config: Config
     private lateinit var gameModeManager: GameModeManager
     lateinit var testMode: GameMode
 
@@ -41,7 +40,7 @@ class FuxelSagt : JavaPlugin() {
         pluginManager.registerEvents(GUIEH(), this) // GUI Event Handler
     }
 
-    private fun registerGameModes(){
+    private fun registerGameModes() {
         gameModeManager.addGameMode(TNTRun(framework))
         gameModeManager.addGameMode(Sammelwahn(framework))
     }
@@ -50,7 +49,7 @@ class FuxelSagt : JavaPlugin() {
 //        return this.config;
 //    }
 
-    fun getGameModeManager(): GameModeManager{
+    fun getGameModeManager(): GameModeManager {
         return this.gameModeManager
     }
 }

@@ -3,8 +3,6 @@ package guis
 import FuxelSagt
 import framework.gamemodes.GameMode
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.TranslatableComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -32,10 +30,13 @@ class GameModeSelection(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Game
     }
 
     override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-        if(clickedItem == null) return
+        if (clickedItem == null) return
 
-        val name: String = clickedItem.itemMeta.persistentDataContainer.get(getPageGUIKey("game_mode_name"), PersistentDataType.STRING) ?: return println("No name found")
-        val gameMode: GameMode = fuxelSagt.getGameModeManager().getGameModeByName(name) ?: return println("No game mode found")
+        val name: String =
+            clickedItem.itemMeta.persistentDataContainer.get(getPageGUIKey("game_mode_name"), PersistentDataType.STRING)
+                ?: return println("No name found")
+        val gameMode: GameMode =
+            fuxelSagt.getGameModeManager().getGameModeByName(name) ?: return println("No game mode found")
 
         player.closeInventory()
 

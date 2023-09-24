@@ -32,7 +32,7 @@ class TablistManager(private val framework: Framework) {
             framework.getPlayerManager().isSpectator(player) -> "spectator"
             else -> "player"
         }
-        tabListTeam = if(player.scoreboard.getTeam(teamName) == null) {
+        tabListTeam = if (player.scoreboard.getTeam(teamName) == null) {
             player.scoreboard.registerNewTeam(teamName);
         } else {
             player.scoreboard.getTeam(teamName);

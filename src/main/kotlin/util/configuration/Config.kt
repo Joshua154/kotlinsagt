@@ -3,9 +3,7 @@ package util.configuration
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import framework.manager.MessageContainer
-import framework.manager.MessageManager
 import framework.manager.MessageType
-import org.apache.logging.log4j.message.Message
 import java.io.File
 
 class Config {
@@ -19,10 +17,10 @@ class Config {
 
     //Reading & Converting
     companion object {
-        private val gson : Gson = GsonBuilder().setPrettyPrinting().create();
+        private val gson: Gson = GsonBuilder().setPrettyPrinting().create();
 
         fun fromFile(file: File): Config {
-            return if(file.exists()) {
+            return if (file.exists()) {
                 this.fromString(file.readText())
             } else {
                 toFile(file, Config());
@@ -31,7 +29,7 @@ class Config {
 
         fun toFile(file: File, config: Config): Config {
             file.mkdirs()
-            if(file.exists()) {
+            if (file.exists()) {
                 file.delete()
             }
             file.createNewFile()

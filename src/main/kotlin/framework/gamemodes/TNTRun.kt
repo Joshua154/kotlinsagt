@@ -9,13 +9,14 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 
-class TNTRun(private val framework: Framework): GameMode(framework) {
+class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     override val name: String = "tntrun"
     override val displayName: String = "TNT Run"
     override val displayItem: ItemStack = ItemBuilder(Material.TNT).build()
     override val worldName: String = "tntrun"
-    override val description: String = "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
+    override val description: String =
+        "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
     override val minPlayers: Int = 3
     override val maxPlayers: Int = -1
     override val HasPoints: Boolean = false
@@ -49,23 +50,23 @@ class TNTRun(private val framework: Framework): GameMode(framework) {
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if(!isPlayer(event.player) || !isRunning) return
+        if (!isPlayer(event.player) || !isRunning) return
 
         val blockLocation = event.to.block.location
         // event.player.sendMessage("§c${blockLocation.x}|${blockLocation.y}|${blockLocation.z} §a${getSpawnLocation().x}|${getSpawnLocation().y}|${getSpawnLocation().z}")
-        if(blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
+        if (blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR
             addToDead(event.player)
             playerLoose(event.player) // "x ist ausgeschieden!"
             return
         }
-        if(blockLocation == event.from.block.location) return
+        if (blockLocation == event.from.block.location) return
 
         val materialsToReplace = arrayOf(Material.TNT, Material.SAND, Material.GRAVEL)
         blockLocation.subtract(0.0, 1.0, 0.0)
 
         val world = event.player.location.world
-        if(world.getBlockAt(blockLocation).type !in materialsToReplace) return
+        if (world.getBlockAt(blockLocation).type !in materialsToReplace) return
 
         val fuxelSagt = framework.getFuxelSagt()
         fuxelSagt.server.scheduler.runTaskLater(fuxelSagt, Runnable {

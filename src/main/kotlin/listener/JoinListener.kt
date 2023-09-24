@@ -1,12 +1,11 @@
 package listener
 
 import FuxelSagt
-import guis.TeleportGUI
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class JoinListener(val fuxelSagt: FuxelSagt): Listener {
+class JoinListener(val fuxelSagt: FuxelSagt) : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {

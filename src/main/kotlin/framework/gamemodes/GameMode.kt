@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 
-abstract class GameMode(private val framework: Framework): Listener {
+abstract class GameMode(private val framework: Framework) : Listener {
 
     private val fuxelSagt: FuxelSagt = framework.getFuxelSagt()
 
@@ -34,7 +34,7 @@ abstract class GameMode(private val framework: Framework): Listener {
         fuxelSagt.server.worlds.add(world)
     }
 
-    open fun getWorldCreator(): WorldCreator{
+    open fun getWorldCreator(): WorldCreator {
         return WorldCreator(worldName)
             .generateStructures(false)
             .type(WorldType.FLAT)
@@ -42,8 +42,10 @@ abstract class GameMode(private val framework: Framework): Listener {
 //                                "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
 //                                            "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
 //                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}")
-            .generatorSettings("{\"biome\": \"minecraft:the_void\"," +
-                    "\"layers\": [{\"block\": \"minecraft:air\",\"height\": 1}]}")
+            .generatorSettings(
+                "{\"biome\": \"minecraft:the_void\"," +
+                        "\"layers\": [{\"block\": \"minecraft:air\",\"height\": 1}]}"
+            )
     }
 
     /** wird aufgerufen, wenn der Gamemode entladen wird **/
@@ -52,7 +54,7 @@ abstract class GameMode(private val framework: Framework): Listener {
         unregisterEventListener()
     }
 
-    fun registerEventListener(){
+    fun registerEventListener() {
         fuxelSagt.server.pluginManager.registerEvents(this, fuxelSagt)
     }
 
@@ -86,25 +88,29 @@ abstract class GameMode(private val framework: Framework): Listener {
     }
 
     fun tpPlayersToGame(vararg players: Player) {
-        for (player in players){
+        for (player in players) {
             Bukkit.getScheduler().runTaskLater(fuxelSagt, Runnable {
                 this.tpToGameSpawn(player)
             }, 2)
         }
     }
 
-    fun getPlayers(): ArrayList<Player> { return players }
+    fun getPlayers(): ArrayList<Player> {
+        return players
+    }
 
-    fun getDead(): ArrayList<Player> { return dead }
+    fun getDead(): ArrayList<Player> {
+        return dead
+    }
 
-    fun addToPlayers(vararg players: Player){
-        for (player in players){
+    fun addToPlayers(vararg players: Player) {
+        for (player in players) {
             this.players.add(player)
             this.points[player] = 0
         }
     }
 
-    fun addToDead(player: Player){
+    fun addToDead(player: Player) {
         if (players.contains(player)) {
             players.remove(player)
         }
@@ -116,11 +122,11 @@ abstract class GameMode(private val framework: Framework): Listener {
         dead.add(player)
     }
 
-    fun isPlayer(player: Player): Boolean{
+    fun isPlayer(player: Player): Boolean {
         return players.contains(player) && !dead.contains(player)
     }
 
-    fun isSpectator(player: Player): Boolean{
+    fun isSpectator(player: Player): Boolean {
         return dead.contains(player)
     }
 

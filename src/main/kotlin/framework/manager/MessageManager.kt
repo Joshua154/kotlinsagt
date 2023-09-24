@@ -23,6 +23,4 @@ class MessageManager(private val framework: Framework) {
 //    private val messages: Array<MessageContainer> = this.framework.getFuxelSagt().getConfiguration().messages
 
 
-
-
 }

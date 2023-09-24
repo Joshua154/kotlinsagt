@@ -1,6 +1,6 @@
 package util
 
-import org.bukkit.*
+import org.bukkit.Location
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

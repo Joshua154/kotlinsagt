@@ -7,7 +7,7 @@ import org.bukkit.WorldType
 import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 
-class Sammelwahn(private val framework: Framework): GameMode(framework) {
+class Sammelwahn(private val framework: Framework) : GameMode(framework) {
     override val name: String = "collectingmania"
     override val displayName: String = "Sammelwahn"
     override val displayItem: ItemStack = ItemBuilder(Material.BUNDLE).build()

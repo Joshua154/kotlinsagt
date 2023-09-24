@@ -26,15 +26,15 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         return ceil(getContent().size.div(itemsPerPage.coerceAtLeast(1).toFloat())).toInt()
     }
 
-    private fun switchPage(direction: Boolean){
+    private fun switchPage(direction: Boolean) {
         //direction: false -> back, true -> further
-        if(getPageCount() == 1) return
+        if (getPageCount() == 1) return
 
-        if(direction) page += 1
+        if (direction) page += 1
         else page -= 1
 
-        if(page < 0) page = 0
-        if(page > getPageCount()) page = getPageCount() - 1
+        if (page < 0) page = 0
+        if (page > getPageCount()) page = getPageCount() - 1
 
         onPageSwitch()
         refresh()
@@ -53,7 +53,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         val itemsOnPage: List<ItemStack> = getItemsFromPage(this.page)
 
         for (i in 0..<itemsPerPage + 1) {
-            if(i < itemsOnPage.size) {
+            if (i < itemsOnPage.size) {
                 inventory.setItem(i, itemsOnPage[i])
             }
         }
@@ -79,10 +79,10 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         if (getPage() + 1 != getPageCount()) { //if not last page
             inventory.setItem(
                 5 * 9 + 7, ItemBuilder(Material.PLAYER_HEAD)
-                .setName("Weiter")
-                .setSkullOwnerWithURL("e3fc52264d8ad9e654f415bef01a23947edbccccf649373289bea4d149541f70")
-                .addPersistentDataContainer(getPageGUIKey("type"), PersistentDataType.STRING, "further")
-                .build()
+                    .setName("Weiter")
+                    .setSkullOwnerWithURL("e3fc52264d8ad9e654f415bef01a23947edbccccf649373289bea4d149541f70")
+                    .addPersistentDataContainer(getPageGUIKey("type"), PersistentDataType.STRING, "further")
+                    .build()
             )
         }
 
@@ -90,11 +90,11 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
     }
 
     override fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-        if(clickedItem == null) return
+        if (clickedItem == null) return
         val itemMeta = clickedItem.itemMeta
         val container = itemMeta.persistentDataContainer
-        if(container.has(getPageGUIKey("type"))){
-            when (container.get(getPageGUIKey("type"), PersistentDataType.STRING)){
+        if (container.has(getPageGUIKey("type"))) {
+            when (container.get(getPageGUIKey("type"), PersistentDataType.STRING)) {
                 "back" -> return switchPage(false)
                 "further" -> return switchPage(true)
             }
@@ -114,5 +114,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
 
     abstract fun getContent(): List<ItemStack>
     abstract fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
-    open fun onPageSwitch() { return }
+    open fun onPageSwitch() {
+        return
+    }
 }

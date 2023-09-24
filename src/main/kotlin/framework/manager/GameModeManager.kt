@@ -6,8 +6,8 @@ import java.util.*
 
 class GameModeManager(private val framework: Framework) {
 
-     private var gameModes = ArrayList<GameMode>()
-     private var currentGameMode: Optional<GameMode> = Optional.empty()
+    private var gameModes = ArrayList<GameMode>()
+    private var currentGameMode: Optional<GameMode> = Optional.empty()
 
     init {
         setupGameModes()
@@ -17,19 +17,19 @@ class GameModeManager(private val framework: Framework) {
         // alle Gamemodes initialisieren
     }
 
-    fun addGameMode(gameMode: GameMode){
+    fun addGameMode(gameMode: GameMode) {
         gameModes.add(gameMode)
     }
 
-    fun removeGameMode(gameMode: GameMode){
+    fun removeGameMode(gameMode: GameMode) {
         gameModes.remove(gameMode)
     }
 
-    fun getGameModes(): ArrayList<GameMode>{
+    fun getGameModes(): ArrayList<GameMode> {
         return gameModes
     }
 
-    fun getGameModeByName(name: String): GameMode?{
+    fun getGameModeByName(name: String): GameMode? {
         return gameModes.find { mode -> mode.name == name }
     }
 
@@ -37,17 +37,17 @@ class GameModeManager(private val framework: Framework) {
         return currentGameMode
     }
 
-     fun setActiveGameMode(gameMode: GameMode) {
-         if (currentGameMode.isPresent) {
-             unloadGameMode(currentGameMode.get())
-         }
-         currentGameMode = Optional.of(gameMode)
+    fun setActiveGameMode(gameMode: GameMode) {
+        if (currentGameMode.isPresent) {
+            unloadGameMode(currentGameMode.get())
+        }
+        currentGameMode = Optional.of(gameMode)
 
-         currentGameMode.get().load()
-     }
+        currentGameMode.get().load()
+    }
 
-     fun unloadGameMode(gameMode: GameMode) {
-         gameMode.unload()
-         currentGameMode = Optional.empty()
-     }
+    fun unloadGameMode(gameMode: GameMode) {
+        gameMode.unload()
+        currentGameMode = Optional.empty()
+    }
 }

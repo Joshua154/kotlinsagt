@@ -4,8 +4,7 @@ import framework.Framework
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 class PlayerManager(private val framework: Framework) {
     private var players = ArrayList<UUID>()
@@ -65,10 +64,10 @@ class PlayerManager(private val framework: Framework) {
 
     fun getFormat(player: Player): Component {
         val text: String = when {
-            isFuxel(player) -> Colors.FUXEL.prefix+player.name+Colors.FUXEL.suffix
-            isSpectator(player) -> Colors.SPECTATOR.prefix+player.name+Colors.PLAYER.suffix
-            isPlayer(player) -> Colors.PLAYER.prefix+player.name+Colors.PLAYER.suffix
-            else -> Colors.OTHER.prefix+player.name+Colors.OTHER.suffix
+            isFuxel(player) -> Colors.FUXEL.prefix + player.name + Colors.FUXEL.suffix
+            isSpectator(player) -> Colors.SPECTATOR.prefix + player.name + Colors.PLAYER.suffix
+            isPlayer(player) -> Colors.PLAYER.prefix + player.name + Colors.PLAYER.suffix
+            else -> Colors.OTHER.prefix + player.name + Colors.OTHER.suffix
         }
         return Component.text(text)
     }
