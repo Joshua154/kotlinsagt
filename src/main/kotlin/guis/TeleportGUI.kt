@@ -42,8 +42,4 @@ class TeleportGUI(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Teleporter
             player.teleport(teleportToPlayer.location)
         }
     }
-
-    override fun onPageSwitch() {
-        return
-    }
 }

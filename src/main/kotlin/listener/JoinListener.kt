@@ -13,8 +13,8 @@ class JoinListener(val fuxelSagt: FuxelSagt): Listener {
         // fuxelsagt.getTablistManager().sendTablistToPlayer(event.player)
         // playermanager.addPlayer(event.player)
 
-        val gui = TeleportGUI(fuxelSagt)
-        gui.open(event.player)
+//        val gui = TeleportGUI(fuxelSagt)
+//        gui.open(event.player)
     }
 
 }

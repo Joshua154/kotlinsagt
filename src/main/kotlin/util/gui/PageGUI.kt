@@ -114,5 +114,5 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
 
     abstract fun getContent(): List<ItemStack>
     abstract fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
-    abstract fun onPageSwitch()
+    open fun onPageSwitch() { return }
 }

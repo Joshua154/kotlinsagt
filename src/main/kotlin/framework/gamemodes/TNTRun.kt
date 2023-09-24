@@ -6,14 +6,20 @@ import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ExplosionPrimeEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.inventory.ItemStack
+import util.item.ItemBuilder
 
-class TNTRun(private val framework: Framework, private val shortName: String): GameMode(framework, "tntrun") {
+class TNTRun(private val framework: Framework): GameMode(framework) {
 
+    override val name: String = "tntrun"
     override val displayName: String = "TNT Run"
+    override val displayItem: ItemStack = ItemBuilder(Material.TNT).build()
     override val worldName: String = "tntrun"
     override val description: String = "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
     override val minPlayers: Int = 3
     override val maxPlayers: Int = -1
+    override val HasPoints: Boolean = false
+    override val IsFinale: Boolean = false
 
     override fun prepare() {
         load()
@@ -49,7 +55,7 @@ class TNTRun(private val framework: Framework, private val shortName: String): G
         // event.player.sendMessage("§c${blockLocation.x}|${blockLocation.y}|${blockLocation.z} §a${getSpawnLocation().x}|${getSpawnLocation().y}|${getSpawnLocation().z}")
         if(blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR
-            addSpectator(event.player)
+            addToDead(event.player)
             playerLoose(event.player) // "x ist ausgeschieden!"
             return
         }

@@ -1,6 +1,7 @@
 package commands
 
 import FuxelSagt
+import guis.GameModeSelection
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -12,9 +13,10 @@ class TestCommand(private val fuxelSagt: FuxelSagt): CommandExecutor {
         if (sender !is Player) {
             return false
         }
-        val testMode = fuxelSagt.testMode
-        testMode.addPlayers(sender)
-        testMode.tpPlayersToGame(sender)
+
+        val gui = GameModeSelection(fuxelSagt)
+        gui.open(sender)
+
         return true
     }
 }
