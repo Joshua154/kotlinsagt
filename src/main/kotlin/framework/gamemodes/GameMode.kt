@@ -7,6 +7,7 @@ import org.bukkit.*
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
+import java.io.File
 
 abstract class GameMode(private val framework: Framework) : Listener {
 
@@ -24,14 +25,48 @@ abstract class GameMode(private val framework: Framework) : Listener {
     abstract val minPlayers: Int
     abstract val maxPlayers: Int
     abstract val worldName: String
-    abstract val HasPoints: Boolean
-    abstract val IsFinale: Boolean
+    abstract val hasPoints: Boolean
+    abstract val hasPreBuildWorld: Boolean
+    abstract val isFinale: Boolean
     open var timeLimit = -1 // in seconds
 
     /** wird aufgerufen, wenn der Gamemode geladen wird **/
     fun load() {
-        val world: World? = getWorldCreator().createWorld()
-        fuxelSagt.server.worlds.add(world)
+        copyPreBuildWorld()
+
+        fuxelSagt.server.createWorld(getWorldCreator())
+    }
+
+    fun copyPreBuildWorld() {
+        val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
+        val serverFolder = getServerFolder()
+
+        val worldFolder = File(pluginFolder, "preBuildWorlds/$worldName")
+
+        if (!worldFolder.exists()) {
+            fuxelSagt.logger.warning("PreBuildWorld $worldName not found!")
+            return
+        }
+
+        deleteCreatedWorld()
+        worldFolder.copyRecursively(getCreatedWoldFile())
+    }
+    fun getServerFolder(): File{
+        val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
+
+        val path = pluginFolder.path.split("\\").toMutableList()
+        path.removeLast()
+        path.removeLast()
+        return File(path.stream().reduce("") { a, b -> "$a\\$b" })
+    }
+    fun getCreatedWoldFile(): File {
+        return File(getServerFolder(), worldName)
+    }
+    fun deleteCreatedWorld() {
+        val worldFolderFiles = getCreatedWoldFile()
+        if(worldFolderFiles.exists()){
+            worldFolderFiles.deleteRecursively()
+        }
     }
 
     open fun getWorldCreator(): WorldCreator {
@@ -52,6 +87,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
     fun unload() {
         fuxelSagt.server.unloadWorld(worldName, false)
         unregisterEventListener()
+        reset()
     }
 
     fun registerEventListener() {
@@ -76,7 +112,16 @@ abstract class GameMode(private val framework: Framework) : Listener {
     abstract fun stop()
 
     /** wird aufgerufen, wenn der Gamemode resettet wird **/
-    abstract fun reset()
+    private fun reset(){
+        val server = framework.getFuxelSagt().server
+        server.onlinePlayers.stream()
+            .filter { player -> player.world.name == worldName }
+            .forEach{ player -> player.teleport(server.getWorld("world")!!.spawnLocation) }
+
+        println(server.unloadWorld(worldName, false))
+        server.worlds.remove(server.getWorld(worldName))
+        deleteCreatedWorld()
+    }
 
     fun getSpawnLocation(): Location {
         return fuxelSagt.server.getWorld(worldName)!!.spawnLocation

@@ -19,8 +19,9 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
     override val minPlayers: Int = 3
     override val maxPlayers: Int = -1
-    override val HasPoints: Boolean = false
-    override val IsFinale: Boolean = false
+    override val hasPoints: Boolean = false
+    override val hasPreBuildWorld: Boolean = true
+    override val isFinale: Boolean = false
 
     override fun prepare() {
         load()
@@ -42,10 +43,6 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     override fun stop() {
         isRunning = false
-    }
-
-    override fun reset() {
-        TODO("Not yet implemented")
     }
 
     @EventHandler

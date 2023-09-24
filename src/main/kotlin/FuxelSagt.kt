@@ -3,8 +3,12 @@ import framework.Framework
 import framework.gamemodes.GameMode
 import framework.gamemodes.Sammelwahn
 import framework.gamemodes.TNTRun
+import framework.manager.Colors
 import framework.manager.GameModeManager
 import listener.JoinListener
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import util.gui.GUIEH
 
@@ -51,5 +55,13 @@ class FuxelSagt : JavaPlugin() {
 
     fun getGameModeManager(): GameModeManager {
         return this.gameModeManager
+    }
+
+    fun sendPlayerMessage(player: Player, message: Component) {
+        player.sendMessage(
+            MiniMessage.miniMessage()
+                .deserialize("<gray>[" + Colors.FUXELSAGT.prefix + "FuxelSagt" + Colors.FUXELSAGT.suffix + "]: <gray>")
+                .append(message)
+        )
     }
 }

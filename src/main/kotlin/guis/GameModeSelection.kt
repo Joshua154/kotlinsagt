@@ -39,6 +39,7 @@ class GameModeSelection(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Game
             fuxelSagt.getGameModeManager().getGameModeByName(name) ?: return println("No game mode found")
 
         player.closeInventory()
+        fuxelSagt.sendPlayerMessage(player, Component.text(gameMode.displayName).color(NamedTextColor.RED).append(Component.text(" is being prepared").color(NamedTextColor.GRAY)))
 
         fuxelSagt.getGameModeManager().setActiveGameMode(gameMode)
 

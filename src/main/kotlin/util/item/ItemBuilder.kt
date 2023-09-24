@@ -50,13 +50,7 @@ class ItemBuilder() {
         val maxLength = this.itemStack.itemMeta.lore()
             ?.maxOfOrNull { line -> PlainTextComponentSerializer.plainText().serialize(line).length } ?: 0
 
-        println(name.content())
-        println("textLength $textLength")
-        println("maxLength $maxLength")
         val n = (maxLength - textLength) / 2
-        println("calc ${n.coerceAtLeast(0)}")
-
-
         setName(Component.text(" ".repeat((n + n * 1 / 3).coerceAtLeast(0))).append(name))
         return this
     }

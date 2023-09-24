@@ -6,6 +6,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.io.File
 
 
 class TestCommand(private val fuxelSagt: FuxelSagt) : CommandExecutor {
@@ -17,6 +18,9 @@ class TestCommand(private val fuxelSagt: FuxelSagt) : CommandExecutor {
         val gui = GameModeSelection(fuxelSagt)
         gui.open(sender)
 
+        fuxelSagt.server.worlds.forEach{
+            println(it.name)
+        }
         return true
     }
 }
