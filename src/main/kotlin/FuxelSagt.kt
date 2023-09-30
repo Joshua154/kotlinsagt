@@ -1,5 +1,7 @@
+import commands.StartCommand
 import commands.TestCommand
 import framework.Framework
+import framework.gamemodes.Blockparty
 import framework.gamemodes.GameMode
 import framework.gamemodes.Sammelwahn
 import framework.gamemodes.TNTRun
@@ -31,11 +33,13 @@ class FuxelSagt : JavaPlugin() {
     }
 
     override fun onDisable() {
-
+        // Unload the current gamemode to ensure that a new map is going to be generated when te server starts back up.
+        this.gameModeManager.getCurrentGameMode().ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); };
     }
 
     private fun registerCommands() {
         getCommand("testcommand")?.setExecutor(TestCommand(this))
+        getCommand("teststart")?.setExecutor(StartCommand(this))
     }
 
     private fun registerListeners() {
@@ -47,6 +51,7 @@ class FuxelSagt : JavaPlugin() {
     private fun registerGameModes() {
         gameModeManager.addGameMode(TNTRun(framework))
         gameModeManager.addGameMode(Sammelwahn(framework))
+        gameModeManager.addGameMode(Blockparty(framework))
     }
 
 //    fun getConfiguration(): Config {

@@ -32,12 +32,15 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     /** wird aufgerufen, wenn der Gamemode geladen wird **/
     fun load() {
-        copyPreBuildWorld()
+        this.fuxelSagt.logger.info(ChatColor.WHITE.toString() + "Loading ${this.displayName}...")
+        if (this.hasPreBuildWorld) this.copyPreBuildWorld()
+        else this.fuxelSagt.logger.info("Generating new map for ${this.name}...");
 
         fuxelSagt.server.createWorld(getWorldCreator())
     }
 
     fun copyPreBuildWorld() {
+        this.fuxelSagt.logger.info("Loading prebuilt map for ${this.name}...");
         val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
         val serverFolder = getServerFolder()
 
@@ -51,6 +54,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         deleteCreatedWorld()
         worldFolder.copyRecursively(getCreatedWoldFile())
     }
+
     fun getServerFolder(): File{
         val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
 
@@ -59,14 +63,20 @@ abstract class GameMode(private val framework: Framework) : Listener {
         path.removeLast()
         return File(path.stream().reduce("") { a, b -> "$a\\$b" })
     }
+
     fun getCreatedWoldFile(): File {
         return File(getServerFolder(), worldName)
     }
+
     fun deleteCreatedWorld() {
         val worldFolderFiles = getCreatedWoldFile()
         if(worldFolderFiles.exists()){
             worldFolderFiles.deleteRecursively()
         }
+    }
+
+    open fun setupPlayer(player: Player) {
+        this.sendStartupMessage(player);
     }
 
     open fun getWorldCreator(): WorldCreator {
@@ -85,7 +95,12 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     /** wird aufgerufen, wenn der Gamemode entladen wird **/
     fun unload() {
-        fuxelSagt.server.unloadWorld(worldName, false)
+        for (player in this.players) {
+            player.teleport(Location(Bukkit.getWorld("world"), player.location.x, player.location.y, player.location.z)); // TODO: Maybe replace with dedicated lobby
+        }
+        val worldFolder: File? = this.fuxelSagt.server.getWorld(this.worldName)?.worldFolder;
+        this.fuxelSagt.server.unloadWorld(this.worldName, false);
+        worldFolder?.deleteRecursively();
         unregisterEventListener()
         reset()
     }
@@ -101,18 +116,17 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     abstract fun start()
 
-    fun startupMessage() {
-        for (player in players) {
-            player.sendMessage(Component.text("§b==== $displayName ====§r"))
-            player.sendMessage(Component.text("§7$description§r\n"))
-        }
+    fun sendStartupMessage(player: Player) {
+        player.sendMessage(Component.text("§b==== ${this.displayName} ====§r"))
+        player.sendMessage(Component.text("§7${this.description}§r\n"))
     }
 
     /** wird aufgerufen, wenn der Gamemode gestoppt wird **/
     abstract fun stop()
 
     /** wird aufgerufen, wenn der Gamemode resettet wird **/
-    private fun reset(){
+    private fun reset() {
+        this.framework.getFuxelSagt().logger.info("Resetting the gamemode ${this.name}...");
         val server = framework.getFuxelSagt().server
         server.onlinePlayers.stream()
             .filter { player -> player.world.name == worldName }
@@ -150,6 +164,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     fun addToPlayers(vararg players: Player) {
         for (player in players) {
+            this.setupPlayer(player);
             this.players.add(player)
             this.points[player] = 0
         }
@@ -182,7 +197,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         }
         if (players.size == 1) {
             for (p in fuxelSagt.server.onlinePlayers) {
-                p.sendMessage(Component.text("§e» ${players[0].name} hat gewonnen!"))
+                p.sendMessage(Component.text("§6» ${players[0].name} hat gewonnen!"))
                 // TODO Win Animation
             }
             stop()

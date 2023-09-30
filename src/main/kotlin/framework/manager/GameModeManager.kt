@@ -43,7 +43,7 @@ class GameModeManager(private val framework: Framework) {
         }
         currentGameMode = Optional.of(gameMode)
 
-        currentGameMode.get().load()
+        currentGameMode.get().prepare();
     }
 
     fun unloadGameMode(gameMode: GameMode) {

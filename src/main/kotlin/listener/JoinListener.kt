@@ -1,6 +1,7 @@
 package listener
 
 import FuxelSagt
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -14,6 +15,7 @@ class JoinListener(val fuxelSagt: FuxelSagt) : Listener {
 
 //        val gui = TeleportGUI(fuxelSagt)
 //        gui.open(event.player)
+        event.getPlayer().teleport(Bukkit.getWorld("world")!!.spawnLocation); // TODO: Replace with proper lobby
     }
 
 }

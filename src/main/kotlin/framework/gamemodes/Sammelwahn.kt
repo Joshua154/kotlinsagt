@@ -17,7 +17,7 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
     override val description: String =
         "placeholder"
     override val minPlayers: Int = 3
-    override val maxPlayers: Int = -1
+    override val maxPlayers: Int = Int.MAX_VALUE
     override val hasPoints: Boolean = false
     override val hasPreBuildWorld: Boolean = false
     override val isFinale: Boolean = false
@@ -33,7 +33,6 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
     override fun prepare() {
         load()
         registerEventListener()
-        startupMessage()
         start() // COMBAK later to be called by command/ui
     }
 
