@@ -45,3 +45,8 @@ tasks.withType<Jar> {
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
 }
+
+tasks.register<Copy>("copyToServer") {
+    from("build/libs/FuxelSagt-1.0-SNAPSHOT.jar")
+    into("server/plugins")
+}

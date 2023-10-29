@@ -141,7 +141,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         fuxelSagt.server.pluginManager.registerEvents(this, fuxelSagt)
     }
 
-    abstract fun unregisterEventListener()
+    open fun unregisterEventListener() {}
 
     /** wird aufgerufen, wenn der Gamemode gestartet wird **/
     abstract fun prepare()
@@ -169,7 +169,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         deleteCreatedWorld()
     }
 
-    abstract fun cleanup()
+    open fun cleanup() {}
 
     fun getSpawnLocation(): Location {
         return fuxelSagt.server.getWorld(worldName)!!.spawnLocation

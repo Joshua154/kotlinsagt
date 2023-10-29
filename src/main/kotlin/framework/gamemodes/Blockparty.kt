@@ -81,6 +81,13 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         WHITE("Weiß", NamedTextColor.WHITE, Material.WHITE_CONCRETE);
     }
 
+    override fun getWorldCreator(): WorldCreator {
+        return super.getWorldCreator()
+            .generateStructures(false)
+            .type(WorldType.FLAT)
+            .generatorSettings("{\"biome\": \"minecraft:the_void\"," + "\"layers\": []}")
+    }
+
     override fun setupPlayer(player: Player) {
         this.sendStartupMessage(player);
         player.inventory.clear();
@@ -250,6 +257,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR;
             this.addToDead(event.player);
             this.playerLoose(event.player);
+            this.checkGameScore();
             return;
         }
     }

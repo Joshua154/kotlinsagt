@@ -15,12 +15,14 @@ class TestCommand(private val fuxelSagt: FuxelSagt) : CommandExecutor {
             return false
         }
 
-        val gui = GameModeSelection(fuxelSagt)
-        gui.open(sender)
+//        val gui = GameModeSelection(fuxelSagt)
+//        gui.open(sender)
+//
+//        fuxelSagt.server.worlds.forEach{
+//            println(it.name)
+//        }
 
-        fuxelSagt.server.worlds.forEach{
-            println(it.name)
-        }
+        fuxelSagt.getGameControlManager().giveItems(sender)
         return true
     }
 }

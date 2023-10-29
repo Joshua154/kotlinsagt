@@ -1,6 +1,7 @@
 package framework.gamemodes
 
 import framework.Framework
+import framework.configuration.Configurable
 import org.bukkit.Material
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler

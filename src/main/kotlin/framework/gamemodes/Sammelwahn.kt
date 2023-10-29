@@ -43,10 +43,6 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
         start() // COMBAK later to be called by command/ui
     }
 
-    override fun unregisterEventListener() {
-
-    }
-
     override fun start() {
         tpPlayersToGame()
         isRunning = true
@@ -55,6 +51,4 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
     override fun stop() {
         isRunning = false
     }
-
-    override fun cleanup() {}
 }

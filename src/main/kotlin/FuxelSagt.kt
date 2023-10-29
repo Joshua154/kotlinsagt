@@ -7,6 +7,7 @@ import framework.gamemodes.Sammelwahn
 import framework.gamemodes.TNTRun
 import framework.manager.Colors
 import framework.manager.GameModeManager
+import framework.manager.gameControl.GameControlManager
 import listener.JoinListener
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -20,13 +21,14 @@ class FuxelSagt : JavaPlugin() {
 
     //    private lateinit var config: Config
     private lateinit var gameModeManager: GameModeManager
+    private lateinit var gameControlManager: GameControlManager
     lateinit var testMode: GameMode
 
     override fun onEnable() {
 //        config = Config.fromFile(File("config.json"))
         this.framework = Framework(this)
-        this.gameModeManager = GameModeManager(this.framework)
 
+        registerManager()
         registerListeners()
         registerCommands()
         registerGameModes()
@@ -35,6 +37,11 @@ class FuxelSagt : JavaPlugin() {
     override fun onDisable() {
         // Unload the current gamemode to ensure that a new map is going to be generated when te server starts back up.
         this.gameModeManager.getCurrentGameMode().ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); };
+    }
+
+    private fun registerManager() {
+        this.gameModeManager = GameModeManager(this.framework)
+        this.gameControlManager = GameControlManager(this.framework)
     }
 
     private fun registerCommands() {
@@ -46,6 +53,7 @@ class FuxelSagt : JavaPlugin() {
         val pluginManager = server.pluginManager
         pluginManager.registerEvents(JoinListener(this), this)
         pluginManager.registerEvents(GUIEH(), this) // GUI Event Handler
+        pluginManager.registerEvents(this.gameControlManager, this) // GUI Event Handler
     }
 
     private fun registerGameModes() {
@@ -60,6 +68,10 @@ class FuxelSagt : JavaPlugin() {
 
     fun getGameModeManager(): GameModeManager {
         return this.gameModeManager
+    }
+
+    fun getGameControlManager(): GameControlManager {
+        return this.gameControlManager
     }
 
     fun sendPlayerMessage(player: Player, message: Component) {
