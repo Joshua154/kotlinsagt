@@ -17,25 +17,52 @@ abstract class GameMode(private val framework: Framework) : Listener {
     private val dead: ArrayList<Player> = ArrayList()
     private val points: HashMap<Player, Int> = HashMap()
     protected var isRunning: Boolean = false
+    open var remainingTime = -1 // is set to roundTime on load, for possible countdown
+    private var taskID: Int = -1
 
+    // Description
     abstract val name: String
     abstract val displayName: String
     abstract val displayItem: ItemStack
     abstract val description: String
+
     abstract val minPlayers: Int
     abstract val maxPlayers: Int
     abstract val worldName: String
-    abstract val hasPoints: Boolean
     abstract val hasPreBuildWorld: Boolean
+
+    // Modi
+    // Zeit-Modus
+    abstract val roundTime: Int  // in seconds, -1 = infinite, to countdown from
+    // Punkte-Modus
+    abstract val hasPoints: Boolean
+    open var survivorRate: Double = 1.0 // on gamestop which top of players survives, 0.0 - 1.0 in Percent
+    // Teamwin-Modus
+    abstract val hasTeams: Boolean
+    open var teamQuantity: Int = 2
+    // Final-Modus
     abstract val isFinale: Boolean
-    open var timeLimit = -1 // in seconds
+
+    fun getConfigurableValues(): List<ConfigurableValueInterface<out Any>> {
+        val values: MutableList<ConfigurableValueInterface<out Any>> = mutableListOf();
+        for (field in this.javaClass.fields) {
+            for (annotation in field.annotations) {
+                if (annotation is Configurable) {
+                    values.add(ConfigurableValueInterface(annotation.name, annotation.displayItem, field, field.get(this)));
+                }
+            }
+        }
+        return values;
+    }
+
+    open fun applyConfiguration() {}
 
     /** wird aufgerufen, wenn der Gamemode geladen wird **/
     fun load() {
         this.fuxelSagt.logger.info(ChatColor.WHITE.toString() + "Loading ${this.displayName}...")
         if (this.hasPreBuildWorld) this.copyPreBuildWorld()
         else this.fuxelSagt.logger.info("Generating new map for ${this.name}...");
-
+        remainingTime = roundTime
         fuxelSagt.server.createWorld(getWorldCreator())
     }
 
@@ -180,11 +207,12 @@ abstract class GameMode(private val framework: Framework) : Listener {
             players.remove(player)
         }
         this.dead.add(player)
+        checkGameScore()
     }
 
     fun killPlayer(player: Player) {
         framework.getPlayerManager().killPlayer(player)
-        dead.add(player)
+        addToDead(player)
     }
 
     fun isPlayer(player: Player): Boolean {
@@ -200,13 +228,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         for (p in fuxelSagt.server.onlinePlayers) {
             p.sendMessage(Component.text("§c» ${p.name} ist ausgeschieden!"))
         }
-        if (players.size == 1) {
-            for (p in fuxelSagt.server.onlinePlayers) {
-                p.sendMessage(Component.text("§6» ${players[0].name} hat gewonnen!"))
-                // TODO Win Animation
-            }
-            stop()
-        }
+        checkGameScore()
     }
 
     fun playerAddPoints(player: Player, newPoints: Int) {
@@ -226,5 +248,52 @@ abstract class GameMode(private val framework: Framework) : Listener {
         return points.toList().sortedBy { (_, value) -> value }.toMap() as HashMap<Player, Int>
     }
 
-    // TODO countdown und punkte/überlebende auswertung
+    fun checkGameScore() {
+        if (players.size == 1) {
+            for (p in fuxelSagt.server.onlinePlayers) {
+                p.sendMessage(Component.text("§6» ${players[0].name} hat gewonnen!"))
+                // TODO Win Animation
+                // TODO übergeben an framework?
+            }
+            if (isRunning) { stop() }
+        }
+        if (!isRunning) {
+            val survivors: List<Player>
+            if (hasPoints) {
+                // if hasTeams
+                // else
+                val numberOfSurvivors = (points.size * survivorRate).toInt()
+                val sortedPlayers = points.entries.sortedByDescending { it.value }
+
+                survivors = sortedPlayers.take(numberOfSurvivors).map { it.key }  // Die besten Spieler behalten
+                for (d in sortedPlayers.drop(numberOfSurvivors)
+                    .map { it.key }) {  // Die restlichen Spieler als "dead" hinzufügen
+                    addToDead(d)
+                }
+                // points.keys.retainAll { it in survivors }  // Aktualisieren des "points"-HashMaps, wenn nötig
+            } else {
+                // if hasTeams
+                // else
+                survivors = fuxelSagt.server.onlinePlayers as List<Player>
+            }
+            for (p in survivors) {
+                p.sendMessage(Component.text("§6» ${players.size} Spieler haben überlebt!"))
+                // TODO übergeben an framework?
+            }
+        }
+
+    }
+
+    fun startTimer() {
+        val timerTask: Runnable = Runnable{
+            if (remainingTime <= 0) {
+                stop()
+                fuxelSagt.server.scheduler.cancelTask(taskID)
+            }
+            else {
+                remainingTime--
+            }
+        }
+        taskID = fuxelSagt.server.scheduler.runTaskTimer(fuxelSagt, timerTask, 0L, 20L).taskId
+    }
 }

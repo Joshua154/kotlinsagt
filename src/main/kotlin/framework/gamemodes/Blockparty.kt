@@ -30,6 +30,7 @@ import util.noise.TrigonometricNoise
 import java.util.concurrent.ThreadLocalRandom
 
 class Blockparty(private val framework: Framework) : GameMode(framework) {
+    // Description
     override val name: String = "blockparty";
     override val displayName: String = "Blockparty";
     override val displayItem: ItemStack = ItemBuilder(Material.ORANGE_CONCRETE).build();
@@ -37,10 +38,19 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     override val description: String = "todo";
     override val minPlayers: Int = 2;
     override val maxPlayers: Int = Int.MAX_VALUE;
-    override val hasPoints: Boolean = false;
     override val hasPreBuildWorld: Boolean = false;
-    override val isFinale: Boolean = false;
 
+    // Modus
+    override val roundTime: Int = 60 * 5 // 5 minutes
+    // var remainingTime for countdown
+    override val hasPoints: Boolean = false
+    // default survivorRate = 1.0
+    override val hasTeams: Boolean = false
+    // default teamQuantity = 2
+    override val isFinale: Boolean = false
+
+    // In-game Vars
+    @Configurable(Material.IRON_BARS, "Größe der Map")
     private val bounds: Int = 50;
     private val secondsToSearch: Int = 4;
     private val secondsPause: Int = 3;
@@ -201,16 +211,17 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         if (this::task.isInitialized) {
             this.task.cancel();
         }
+        this.getPlayers().forEach { player -> player.inventory.clear()}
         this.isRunning = false;
     }
 
     override fun cleanup() {
-        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar); player.inventory.clear();  }
+        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar)}
     }
 
     @EventHandler
     fun onDamage(event: EntityDamageEvent) {
-        event.setCancelled(true);
+        event.isCancelled = true;
     }
 
     @EventHandler

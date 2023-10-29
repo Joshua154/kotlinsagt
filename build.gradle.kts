@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:3.11.50")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("com.mojang:authlib:3.11.50")  // REVIEW com.mojang:authlib:4.0.43 is the latest version
     implementation("com.google.code.gson:gson:2.10.1")
 
     testImplementation(kotlin("test"))
@@ -37,7 +37,7 @@ tasks.withType<Jar> {
     // To avoid the duplicate handling strategy error
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
-    // To add all of the dependencies
+    // To add all the dependencies
     from(sourceSets.main.get().output)
 
     dependsOn(configurations.runtimeClasspath)

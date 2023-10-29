@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 
 class Sammelwahn(private val framework: Framework) : GameMode(framework) {
+    // Description
     override val name: String = "collectingmania"
     override val displayName: String = "Sammelwahn"
     override val displayItem: ItemStack = ItemBuilder(Material.CHEST).build()
@@ -18,10 +19,16 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
         "placeholder"
     override val minPlayers: Int = 3
     override val maxPlayers: Int = Int.MAX_VALUE
-    override val hasPoints: Boolean = false
     override val hasPreBuildWorld: Boolean = false
+
+    // Modus
+    override val roundTime: Int = 60 * 5 // 5 minutes
+    // var remainingTime for countdown
+    override val hasPoints: Boolean = false
+    // default survivorRate = 1.0
+    override val hasTeams: Boolean = false
+    // default teamQuantity = 2
     override val isFinale: Boolean = false
-    override var timeLimit = 60 * 5 // 5 minutes
 
     override fun getWorldCreator(): WorldCreator {
         return super.getWorldCreator()

@@ -10,23 +10,30 @@ import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 
 class TNTRun(private val framework: Framework) : GameMode(framework) {
-
+    // Description
     override val name: String = "tntrun"
     override val displayName: String = "TNT Run"
     override val displayItem: ItemStack = ItemBuilder(Material.TNT).build()
     override val worldName: String = "tntrun"
     override val description: String =
-        "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
-    override val minPlayers: Int = 3
+        "In TNT Run musst du über TNT Blöcke laufen. Wenn du auf einem TNT Block stehst, " +
+                "verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
+    override val minPlayers: Int = 1 // COMBAK change to 3 later
     override val maxPlayers: Int = Int.MAX_VALUE
-    override val hasPoints: Boolean = false
     override val hasPreBuildWorld: Boolean = true
+
+    // Modus
+    override val roundTime: Int = 60 * 5 // 5 minutes
+    // var remainingTime for countdown
+    override val hasPoints: Boolean = false
+    // default survivorRate = 1.0
+    override val hasTeams: Boolean = false
+    // default teamQuantity = 2
     override val isFinale: Boolean = false
 
     override fun prepare() {
         load()
         registerEventListener()
-        start() // COMBAK later to be called by command/ui
     }
 
     override fun unregisterEventListener() {
@@ -37,10 +44,12 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         tpPlayersToGame()
+        startTimer()
         isRunning = true
     }
 
     override fun stop() {
+        checkGameScore()
         isRunning = false
     }
 
@@ -51,7 +60,6 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         if (!isPlayer(event.player) || !isRunning) return
 
         val blockLocation = event.to.block.location
-        // event.player.sendMessage("§c${blockLocation.x}|${blockLocation.y}|${blockLocation.z} §a${getSpawnLocation().x}|${getSpawnLocation().y}|${getSpawnLocation().z}")
         if (blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR
             addToDead(event.player)
