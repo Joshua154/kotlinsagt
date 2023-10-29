@@ -2,6 +2,8 @@ package framework.gamemodes
 
 import FuxelSagt
 import framework.Framework
+import framework.configuration.Configurable
+import framework.configuration.ConfigurableValueInterface
 import net.kyori.adventure.text.Component
 import org.bukkit.*
 import org.bukkit.entity.Player

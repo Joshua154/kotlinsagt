@@ -1,6 +1,7 @@
 package framework.gamemodes
 
 import framework.Framework
+import framework.configuration.Configurable
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -52,11 +53,13 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     // In-game Vars
     @Configurable(Material.IRON_BARS, "Größe der Map")
     private val bounds: Int = 50;
+    @Configurable(Material.GREEN_STAINED_GLASS_PANE, "Sekunden zum Suchen der Richtigen Farbe")
     private val secondsToSearch: Int = 4;
+    @Configurable(Material.RED_STAINED_GLASS_PANE, "Sekunden zum Ausruhen zwischen den Suchphasen")
     private val secondsPause: Int = 3;
+
     private lateinit var task: BukkitTask;
     private lateinit var bossBar: BossBar;
-
     private var secondsRemaining: Int = 0;
     private var currentColor: Color? = null;
 
@@ -127,6 +130,10 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
                 world?.setType(x, 64, z, Material.AIR);
             }
         }
+    }
+
+    override fun applyConfiguration() {
+        this.generatePattern(TrigonometricNoise(), 0);
     }
 
     override fun unregisterEventListener() {
@@ -230,8 +237,8 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     }
 
     @EventHandler
-    fun onHungerLoose(event: PlayerDropItemEvent) {
-        event.setCancelled(true);
+    fun onPlayerDropItem(event: PlayerDropItemEvent) {
+        event.isCancelled = true;
     }
 
     @EventHandler
