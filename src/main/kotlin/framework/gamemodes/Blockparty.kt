@@ -43,18 +43,23 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
+
     // var remainingTime for countdown
     override val hasPoints: Boolean = false
+
     // default survivorRate = 1.0
     override val hasTeams: Boolean = false
+
     // default teamQuantity = 2
     override val isFinale: Boolean = false
 
     // In-game Vars
     @Configurable(Material.IRON_BARS, "Größe der Map")
     private val bounds: Int = 50;
+
     @Configurable(Material.GREEN_STAINED_GLASS_PANE, "Sekunden zum Suchen der Richtigen Farbe")
     private val secondsToSearch: Int = 4;
+
     @Configurable(Material.RED_STAINED_GLASS_PANE, "Sekunden zum Ausruhen zwischen den Suchphasen")
     private val secondsPause: Int = 3;
 
@@ -134,7 +139,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         for (x in -this.bounds..this.bounds) {
             for (z in -this.bounds..this.bounds) {
                 if (world?.getType(x, 64, z) != this.currentColor?.block)
-                world?.setType(x, 64, z, Material.AIR);
+                    world?.setType(x, 64, z, Material.AIR);
             }
         }
     }
@@ -155,7 +160,13 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     private fun updateHotbar(player: Player) {
         for (slot in 0..8) {
             if (slot == 4) continue;
-            player.inventory.setItem(slot, ItemBuilder(this.currentColor!!.block).setName(Component.text(this.currentColor!!.displayName).color(this.currentColor!!.textColor).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false)).build());
+            player.inventory.setItem(
+                slot,
+                ItemBuilder(this.currentColor!!.block).setName(
+                    Component.text(this.currentColor!!.displayName).color(this.currentColor!!.textColor)
+                        .decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC, false)
+                ).build()
+            );
         }
     }
 
@@ -164,15 +175,17 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
             if (this.secondsRemaining > 0) {
                 this.bossBar.name(
                     /*Component.text("✔✔✔ ").color(NamedTextColor.GREEN)
-                        .append(*/Component.text(this.currentColor!!.displayName).color(this.currentColor!!.textColor)/*)*/.decoration(TextDecoration.BOLD, true)
-                        /*.append(Component.text(" ✔✔✔")).color(NamedTextColor.GREEN)*/
+                        .append(*/Component.text(this.currentColor!!.displayName)
+                        .color(this.currentColor!!.textColor)/*)*/.decoration(TextDecoration.BOLD, true)
+                    /*.append(Component.text(" ✔✔✔")).color(NamedTextColor.GREEN)*/
                 );
                 this.bossBar.progress(this.secondsRemaining.toFloat() / this.secondsToSearch.toFloat());
                 this.bossBar.color(BossBar.Color.GREEN);
             } else {
                 this.bossBar.name(
                     Component.text("\uD83D\uDFAD\uD83D\uDFAD\uD83D\uDFAD ").color(NamedTextColor.RED)
-                        .append(Component.text(this.currentColor!!.displayName).color(this.currentColor!!.textColor)).decoration(TextDecoration.BOLD, true)
+                        .append(Component.text(this.currentColor!!.displayName).color(this.currentColor!!.textColor))
+                        .decoration(TextDecoration.BOLD, true)
                         .append(Component.text(" \uD83D\uDFAD\uD83D\uDFAD\uD83D\uDFAD")).color(NamedTextColor.RED)
                 );
                 this.bossBar.progress((this.secondsPause.toFloat() + this.secondsRemaining) / this.secondsPause.toFloat());
@@ -180,9 +193,15 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
             }
         } else {
             if (!this::bossBar.isInitialized) {
-                this.bossBar = BossBar.bossBar(MiniMessage.miniMessage().deserialize("<rainbow>Blockparty</rainbow>").decoration(TextDecoration.BOLD, true), 1F, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS);
+                this.bossBar = BossBar.bossBar(
+                    MiniMessage.miniMessage().deserialize("<rainbow>Blockparty</rainbow>")
+                        .decoration(TextDecoration.BOLD, true), 1F, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS
+                );
             } else {
-                this.bossBar.name(MiniMessage.miniMessage().deserialize("<rainbow>Blockparty</rainbow>").decoration(TextDecoration.BOLD, true));
+                this.bossBar.name(
+                    MiniMessage.miniMessage().deserialize("<rainbow>Blockparty</rainbow>")
+                        .decoration(TextDecoration.BOLD, true)
+                );
                 this.bossBar.progress(1F);
                 this.bossBar.color(BossBar.Color.PURPLE);
             }
@@ -203,13 +222,16 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
                         getPlayers().forEach { player -> updateHotbar(player) }
                         secondsRemaining = secondsToSearch;
                     }
-                    in 1..< secondsToSearch -> {
+
+                    in 1..<secondsToSearch -> {
                         secondsRemaining--;
                     }
-                    in secondsToSearch ..< secondsToSearch + secondsPause -> {
+
+                    in secondsToSearch..<secondsToSearch + secondsPause -> {
                         removeAnyInvalidBlock();
                         secondsRemaining--;
                     }
+
                     else -> {
                         secondsRemaining--;
                         this.i = -1;
@@ -225,12 +247,12 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         if (this::task.isInitialized) {
             this.task.cancel();
         }
-        this.getPlayers().forEach { player -> player.inventory.clear()}
+        this.getPlayers().forEach { player -> player.inventory.clear() }
         this.isRunning = false;
     }
 
     override fun cleanup() {
-        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar)}
+        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar) }
     }
 
     @EventHandler

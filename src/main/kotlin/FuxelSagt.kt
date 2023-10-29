@@ -36,7 +36,8 @@ class FuxelSagt : JavaPlugin() {
 
     override fun onDisable() {
         // Unload the current gamemode to ensure that a new map is going to be generated when te server starts back up.
-        this.gameModeManager.getCurrentGameMode().ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); };
+        this.gameModeManager.getCurrentGameMode()
+            .ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); };
     }
 
     private fun registerManager() {

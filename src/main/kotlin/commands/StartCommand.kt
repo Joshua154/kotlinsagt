@@ -16,7 +16,12 @@ class StartCommand(private val fuxelSagt: FuxelSagt) : CommandExecutor {
             } else if (gamemode.getPlayers().size > gamemode.maxPlayers) {
                 sender.sendMessage(ChatColor.RED.toString() + "Es sind zu viele Spieler da (${gamemode.getPlayers().size}), um das Spiel zu starten! Es können maximal ${gamemode.maxPlayers} Spieler mitspielen!");
             } else {
-                Bukkit.getOnlinePlayers().forEach { player -> this.fuxelSagt.sendPlayerMessage(player, Component.text("${gamemode.displayName} startet jetzt!")); }
+                Bukkit.getOnlinePlayers().forEach { player ->
+                    this.fuxelSagt.sendPlayerMessage(
+                        player,
+                        Component.text("${gamemode.displayName} startet jetzt!")
+                    );
+                }
                 gamemode.start();
             }
         }, {

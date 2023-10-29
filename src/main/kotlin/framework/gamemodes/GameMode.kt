@@ -36,12 +36,15 @@ abstract class GameMode(private val framework: Framework) : Listener {
     // Modi
     // Zeit-Modus
     abstract val roundTime: Int  // in seconds, -1 = infinite, to countdown from
+
     // Punkte-Modus
     abstract val hasPoints: Boolean
     open var survivorRate: Double = 1.0 // on gamestop which top of players survives, 0.0 - 1.0 in Percent
+
     // Teamwin-Modus
     abstract val hasTeams: Boolean
     open var teamQuantity: Int = 2
+
     // Final-Modus
     abstract val isFinale: Boolean
 
@@ -50,7 +53,14 @@ abstract class GameMode(private val framework: Framework) : Listener {
         for (field in this.javaClass.fields) {
             for (annotation in field.annotations) {
                 if (annotation is Configurable) {
-                    values.add(ConfigurableValueInterface(annotation.name, annotation.displayItem, field, field.get(this)));
+                    values.add(
+                        ConfigurableValueInterface(
+                            annotation.name,
+                            annotation.displayItem,
+                            field,
+                            field.get(this)
+                        )
+                    );
                 }
             }
         }
@@ -84,7 +94,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         worldFolder.copyRecursively(getCreatedWoldFile())
     }
 
-    private fun getServerFolder(): File{
+    private fun getServerFolder(): File {
         val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
 
         fuxelSagt.logger.info("PluginFolder: ${pluginFolder.path}")
@@ -101,7 +111,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     fun deleteCreatedWorld() {
         val worldFolderFiles = getCreatedWoldFile()
-        if(worldFolderFiles.exists()){
+        if (worldFolderFiles.exists()) {
             worldFolderFiles.deleteRecursively()
         }
     }
@@ -114,10 +124,12 @@ abstract class GameMode(private val framework: Framework) : Listener {
         return WorldCreator(worldName)
             .generateStructures(false)
             .type(WorldType.FLAT)
-            .generatorSettings("{\"biome\": \"minecraft:the_void\"," +
-                                "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
-                                            "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
-                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}")
+            .generatorSettings(
+                "{\"biome\": \"minecraft:the_void\"," +
+                        "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
+                        "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
+                        "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}"
+            )
 //            .generatorSettings(
 //                "{\"biome\": \"minecraft:the_void\"," +
 //                        "\"layers\": [{\"block\": \"minecraft:air\",\"height\": 1}]}"
@@ -127,7 +139,14 @@ abstract class GameMode(private val framework: Framework) : Listener {
     /** wird aufgerufen, wenn der Gamemode entladen wird **/
     fun unload() {
         for (player in this.players) {
-            player.teleport(Location(Bukkit.getWorld("world"), player.location.x, player.location.y, player.location.z)); // TODO: Maybe replace with dedicated lobby
+            player.teleport(
+                Location(
+                    Bukkit.getWorld("world"),
+                    player.location.x,
+                    player.location.y,
+                    player.location.z
+                )
+            ); // TODO: Maybe replace with dedicated lobby
         }
         val worldFolder: File? = this.fuxelSagt.server.getWorld(this.worldName)?.worldFolder;
         this.fuxelSagt.server.unloadWorld(this.worldName, false);
@@ -162,7 +181,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         val server = framework.getFuxelSagt().server
         server.onlinePlayers.stream()
             .filter { player -> player.world.name == worldName }
-            .forEach{ player -> player.teleport(server.getWorld("world")!!.spawnLocation) }
+            .forEach { player -> player.teleport(server.getWorld("world")!!.spawnLocation) }
 
         println(server.unloadWorld(worldName, false))
         server.worlds.remove(server.getWorld(worldName))
@@ -257,7 +276,9 @@ abstract class GameMode(private val framework: Framework) : Listener {
                 // TODO Win Animation
                 // TODO übergeben an framework?
             }
-            if (isRunning) { stop() }
+            if (isRunning) {
+                stop()
+            }
         }
         if (!isRunning) {
             val survivors: List<Player>
@@ -287,12 +308,11 @@ abstract class GameMode(private val framework: Framework) : Listener {
     }
 
     fun startTimer() {
-        val timerTask: Runnable = Runnable{
+        val timerTask: Runnable = Runnable {
             if (remainingTime <= 0) {
                 stop()
                 fuxelSagt.server.scheduler.cancelTask(taskID)
-            }
-            else {
+            } else {
                 remainingTime--
             }
         }

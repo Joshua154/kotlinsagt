@@ -4,8 +4,6 @@ import framework.Framework
 import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.WorldType
-import org.bukkit.event.entity.ExplosionPrimeEvent
-import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 
@@ -23,10 +21,13 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
+
     // var remainingTime for countdown
     override val hasPoints: Boolean = false
+
     // default survivorRate = 1.0
     override val hasTeams: Boolean = false
+
     // default teamQuantity = 2
     override val isFinale: Boolean = false
 

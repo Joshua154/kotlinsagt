@@ -1,6 +1,5 @@
 package framework.manager.gameControl
 
-import FuxelSagt
 import framework.Framework
 import guis.GameModeSelection
 import guis.TeleportGUI
@@ -16,14 +15,31 @@ import util.item.ItemBuilder
 
 class GameControlManager(val framework: Framework) : Listener {
     private val items: Map<String, GameControlItem> = mapOf(
-        Pair("teleport", GameControlItem(Component.text("Teleport"), Component.text("TODO"), Material.ENDER_PEARL, TeleportGUI(framework.getFuxelSagt()))),
-        Pair("gamemodes", GameControlItem(Component.text("Gamemodes"), Component.text("TODO"), Material.CHEST, GameModeSelection(framework.getFuxelSagt())))
+        Pair(
+            "teleport",
+            GameControlItem(
+                Component.text("Teleport"),
+                Component.text("TODO"),
+                Material.ENDER_PEARL,
+                TeleportGUI(framework.getFuxelSagt())
+            )
+        ),
+        Pair(
+            "gamemodes",
+            GameControlItem(
+                Component.text("Gamemodes"),
+                Component.text("TODO"),
+                Material.CHEST,
+                GameModeSelection(framework.getFuxelSagt())
+            )
+        )
     )
+
     private fun getItemKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.gamecontrol.item", key)
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if(event.item == null) return
+        if (event.item == null) return
         val container = event.item!!.itemMeta.persistentDataContainer
         val key: NamespacedKey = getItemKey("id")
 

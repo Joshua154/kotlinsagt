@@ -23,7 +23,8 @@ class ConfigurableValueInterface<T : Any> {
         this.material = material;
         this.defaultValue = defaultValue;
         this.field = field;
-        this.clazz = (this::class.java.getGenericSuperclass() as ParameterizedType).getActualTypeArguments()[0] as Class<T>;
+        this.clazz =
+            (this::class.java.getGenericSuperclass() as ParameterizedType).getActualTypeArguments()[0] as Class<T>;
 
         if (this.field.type != this.clazz) throw IllegalArgumentException("The type of the provided filed has to match the generic type of this class! (f:" + this.field.type.name + " != c:" + this.clazz.name + ")");
 
@@ -76,7 +77,7 @@ class ConfigurableValueInterface<T : Any> {
                     else -> null
                 }
             }
-        } 
+        }
     }
 
 }

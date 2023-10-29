@@ -1,7 +1,6 @@
 package framework.gamemodes
 
 import framework.Framework
-import framework.configuration.Configurable
 import org.bukkit.Material
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
@@ -25,10 +24,13 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
+
     // var remainingTime for countdown
     override val hasPoints: Boolean = false
+
     // default survivorRate = 1.0
     override val hasTeams: Boolean = false
+
     // default teamQuantity = 2
     override val isFinale: Boolean = false
 
