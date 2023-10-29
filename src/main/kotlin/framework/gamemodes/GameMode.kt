@@ -55,13 +55,15 @@ abstract class GameMode(private val framework: Framework) : Listener {
         worldFolder.copyRecursively(getCreatedWoldFile())
     }
 
-    fun getServerFolder(): File{
+    private fun getServerFolder(): File{
         val pluginFolder = File(fuxelSagt.dataFolder.absolutePath)
 
-        val path = pluginFolder.path.split("\\").toMutableList()
+        fuxelSagt.logger.info("PluginFolder: ${pluginFolder.path}")
+        val path = pluginFolder.path.split(File.separator).toMutableList()
+        fuxelSagt.logger.info("Server-Folder: $path")
         path.removeLast()
         path.removeLast()
-        return File(path.stream().reduce("") { a, b -> "$a\\$b" })
+        return File(path.stream().reduce("") { a, b -> "$a${File.separator}$b" })
     }
 
     fun getCreatedWoldFile(): File {
@@ -83,14 +85,14 @@ abstract class GameMode(private val framework: Framework) : Listener {
         return WorldCreator(worldName)
             .generateStructures(false)
             .type(WorldType.FLAT)
-//            .generatorSettings("{\"biome\": \"minecraft:the_void\"," +
-//                                "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
-//                                            "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
-//                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}")
-            .generatorSettings(
-                "{\"biome\": \"minecraft:the_void\"," +
-                        "\"layers\": [{\"block\": \"minecraft:air\",\"height\": 1}]}"
-            )
+            .generatorSettings("{\"biome\": \"minecraft:the_void\"," +
+                                "\"layers\": [{\"block\": \"minecraft:bedrock\",\"height\": 1}, " +
+                                            "{\"block\": \"minecraft:dirt\",\"height\": 2}, " +
+                                            "{\"block\": \"minecraft:grass_block\",\"height\": 1}]}")
+//            .generatorSettings(
+//                "{\"biome\": \"minecraft:the_void\"," +
+//                        "\"layers\": [{\"block\": \"minecraft:air\",\"height\": 1}]}"
+//            )
     }
 
     /** wird aufgerufen, wenn der Gamemode entladen wird **/
@@ -103,6 +105,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
         worldFolder?.deleteRecursively();
         unregisterEventListener()
         reset()
+        cleanup()
     }
 
     fun registerEventListener() {
@@ -136,6 +139,8 @@ abstract class GameMode(private val framework: Framework) : Listener {
         server.worlds.remove(server.getWorld(worldName))
         deleteCreatedWorld()
     }
+
+    abstract fun cleanup()
 
     fun getSpawnLocation(): Location {
         return fuxelSagt.server.getWorld(worldName)!!.spawnLocation

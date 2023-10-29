@@ -201,8 +201,11 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         if (this::task.isInitialized) {
             this.task.cancel();
         }
-        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar); player.inventory.clear();  }
         this.isRunning = false;
+    }
+
+    override fun cleanup() {
+        this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar); player.inventory.clear();  }
     }
 
     @EventHandler

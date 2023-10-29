@@ -44,6 +44,8 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         isRunning = false
     }
 
+    override fun cleanup() {}
+
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
         if (!isPlayer(event.player) || !isRunning) return

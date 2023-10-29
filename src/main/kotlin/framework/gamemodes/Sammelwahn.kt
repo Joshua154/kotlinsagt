@@ -48,4 +48,6 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
     override fun stop() {
         isRunning = false
     }
+
+    override fun cleanup() {}
 }
