@@ -1,6 +1,7 @@
-package framework.gamemodes
+package gamemodes.tntrun
 
 import framework.Framework
+import framework.gamemode.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
@@ -20,7 +21,7 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
                 "verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
     override val minPlayers: Int = 1 // COMBAK change to 3 later
     override val maxPlayers: Int = Int.MAX_VALUE
-    override val hasPreBuildWorld: Boolean = true
+    override val hasPreBuiltWorld: Boolean = true
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes

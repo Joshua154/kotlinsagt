@@ -1,7 +1,7 @@
 package framework.manager;
 
 import framework.Framework;
-import framework.gamemodes.GameMode
+import framework.gamemode.GameMode
 import java.util.*
 
 class GameModeManager(private val framework: Framework) {

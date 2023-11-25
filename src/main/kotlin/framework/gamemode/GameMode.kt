@@ -1,4 +1,4 @@
-package framework.gamemodes
+package framework.gamemode
 
 import FuxelSagt
 import framework.Framework
@@ -31,7 +31,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
     abstract val minPlayers: Int
     abstract val maxPlayers: Int
     abstract val worldName: String
-    abstract val hasPreBuildWorld: Boolean
+    abstract val hasPreBuiltWorld: Boolean
 
     // Modi
     // Zeit-Modus
@@ -72,7 +72,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
     /** wird aufgerufen, wenn der Gamemode geladen wird **/
     fun load() {
         this.fuxelSagt.logger.info(ChatColor.WHITE.toString() + "Loading ${this.displayName}...")
-        if (this.hasPreBuildWorld) this.copyPreBuildWorld()
+        if (this.hasPreBuiltWorld) this.copyPreBuildWorld()
         else this.fuxelSagt.logger.info("Generating new map for ${this.name}...");
         remainingTime = roundTime
         fuxelSagt.server.createWorld(getWorldCreator())
@@ -317,5 +317,37 @@ abstract class GameMode(private val framework: Framework) : Listener {
             }
         }
         taskID = fuxelSagt.server.scheduler.runTaskTimer(fuxelSagt, timerTask, 0L, 20L).taskId
+    }
+
+    fun getName(): String {
+        return this.name;
+    }
+
+    fun getDisplayName(): String {
+        return this.displayName;
+    }
+
+    fun getDisplayItem(): ItemStack {
+        return this.displayItem;
+    }
+
+    fun getDescription(): String {
+        return this.description;
+    }
+
+    fun getMinPlayers(): Int {
+        return this.minPlayers;
+    }
+
+    fun getMaxPlayers(): Int {
+        return this.maxPlayers;
+    }
+
+    fun getWorldName(): String {
+        return this.worldName;
+    }
+
+    fun hasPreBuiltWorld(): Boolean {
+        return this.hasPreBuiltWorld;
     }
 }

@@ -1,7 +1,7 @@
 package guis
 
 import FuxelSagt
-import framework.gamemodes.GameMode
+import framework.gamemode.GameMode
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.NamespacedKey

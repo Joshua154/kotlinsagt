@@ -1,7 +1,8 @@
-package framework.gamemodes
+package gamemodes.blockparty
 
 import framework.Framework
 import framework.configuration.Configurable
+import framework.gamemode.GameMode
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -39,7 +40,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     override val description: String = "todo";
     override val minPlayers: Int = 2;
     override val maxPlayers: Int = Int.MAX_VALUE;
-    override val hasPreBuildWorld: Boolean = false;
+    override val hasPreBuiltWorld: Boolean = false;
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
@@ -301,5 +302,6 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         player.velocity = player.velocity.setY(1.0.coerceAtLeast(player.velocity.y + 1));
         event.item?.amount = 0;
     }
+
 
 }

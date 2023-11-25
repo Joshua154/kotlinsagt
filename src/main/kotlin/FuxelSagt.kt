@@ -1,10 +1,10 @@
 import commands.StartCommand
 import commands.TestCommand
 import framework.Framework
-import framework.gamemodes.Blockparty
-import framework.gamemodes.GameMode
-import framework.gamemodes.Sammelwahn
-import framework.gamemodes.TNTRun
+import gamemodes.blockparty.Blockparty
+import framework.gamemode.GameMode
+import gamemodes.sammelwahn.Sammelwahn
+import gamemodes.tntrun.TNTRun
 import framework.manager.Colors
 import framework.manager.GameModeManager
 import framework.manager.gameControl.GameControlManager

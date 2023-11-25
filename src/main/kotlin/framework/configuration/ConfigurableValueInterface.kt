@@ -1,6 +1,6 @@
 package framework.configuration
 
-import framework.gamemodes.GameMode
+import framework.gamemode.GameMode
 import org.bukkit.Material
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
