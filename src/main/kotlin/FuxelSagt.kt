@@ -11,21 +11,27 @@ import framework.manager.gameControl.GameControlManager
 import listener.JoinListener
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import util.configuration.Config
 import util.gui.GUIEH
+import java.io.File
 
 class FuxelSagt : JavaPlugin() {
 
     private lateinit var framework: Framework
 
-    //    private lateinit var config: Config
+    private lateinit var config: Config
     private lateinit var gameModeManager: GameModeManager
     private lateinit var gameControlManager: GameControlManager
     lateinit var testMode: GameMode
 
+    private val filepath: String = "plugins${File.separator}FuxelSagt${File.separator}config.json"
+
     override fun onEnable() {
-//        config = Config.fromFile(File("config.json"))
+        Bukkit.getLogger().info(filepath)
+        config = Config.fromFile(File(filepath))
         this.framework = Framework(this)
 
         registerManager()
