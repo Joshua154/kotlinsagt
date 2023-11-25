@@ -319,35 +319,4 @@ abstract class GameMode(private val framework: Framework) : Listener {
         taskID = fuxelSagt.server.scheduler.runTaskTimer(fuxelSagt, timerTask, 0L, 20L).taskId
     }
 
-    fun getName(): String {
-        return this.name;
-    }
-
-    fun getDisplayName(): String {
-        return this.displayName;
-    }
-
-    fun getDisplayItem(): ItemStack {
-        return this.displayItem;
-    }
-
-    fun getDescription(): String {
-        return this.description;
-    }
-
-    fun getMinPlayers(): Int {
-        return this.minPlayers;
-    }
-
-    fun getMaxPlayers(): Int {
-        return this.maxPlayers;
-    }
-
-    fun getWorldName(): String {
-        return this.worldName;
-    }
-
-    fun hasPreBuiltWorld(): Boolean {
-        return this.hasPreBuiltWorld;
-    }
 }
