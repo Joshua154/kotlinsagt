@@ -50,9 +50,10 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     fun getConfigurableValues(): List<ConfigurableValueInterface<out Any>> {
         val values: MutableList<ConfigurableValueInterface<out Any>> = mutableListOf();
-        for (field in this.javaClass.fields) {
-            for (annotation in field.annotations) {
+        for (field in this.javaClass.declaredFields) {
+            for (annotation in field.declaredAnnotations) {
                 if (annotation is Configurable) {
+                    field.isAccessible = true;
                     values.add(
                         ConfigurableValueInterface(
                             annotation.name,
