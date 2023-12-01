@@ -16,7 +16,7 @@ class TablistManager(private val framework: Framework) {
             framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.registerNewTeam("player")
         }
         if (framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.getTeam("spectator") == null) {
-            framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.registerNewTeam("player")
+            framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.registerNewTeam("spectator")
         }
         if (framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.getTeam("fuxel") == null) {
             framework.getFuxelSagt().server.scoreboardManager.mainScoreboard.registerNewTeam("fuxel")

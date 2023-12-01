@@ -7,7 +7,9 @@ import gamemodes.sammelwahn.Sammelwahn
 import gamemodes.tntrun.TNTRun
 import framework.manager.Colors
 import framework.manager.GameModeManager
+import framework.manager.PlayerManager
 import framework.manager.gameControl.GameControlManager
+import gamemodes.maze.Maze
 import listener.JoinListener
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -40,10 +42,11 @@ class FuxelSagt : JavaPlugin() {
         registerGameModes()
     }
 
+
     override fun onDisable() {
         // Unload the current gamemode to ensure that a new map is going to be generated when te server starts back up.
         this.gameModeManager.getCurrentGameMode()
-            .ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); };
+            .ifPresent { gamemode -> this.gameModeManager.unloadGameMode(gamemode); }
     }
 
     private fun registerManager() {
@@ -67,6 +70,7 @@ class FuxelSagt : JavaPlugin() {
         gameModeManager.addGameMode(TNTRun(framework))
         gameModeManager.addGameMode(Sammelwahn(framework))
         gameModeManager.addGameMode(Blockparty(framework))
+        gameModeManager.addGameMode(Maze(framework))
     }
 
 //    fun getConfiguration(): Config {

@@ -64,7 +64,7 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         if (!isPlayer(event.player) || !isRunning) return
 
         val blockLocation = event.to.block.location
-        if (blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
+        if (isInDeathZone(blockLocation)) {  // REVIEW die Spawnlocation ist irgendwie falsch
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR
             addToDead(event.player)
             playerLoose(event.player) // "x ist ausgeschieden!"
@@ -81,14 +81,29 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         val fuxelSagt = framework.getFuxelSagt()
         fuxelSagt.server.scheduler.runTaskLater(fuxelSagt, Runnable {
             world.getBlockAt(blockLocation).type = Material.AIR
-            world.spawn(blockLocation.add(0.5, -0.5, 0.5), TNTPrimed::class.java)
+            //world.spawn(blockLocation.add(0.5, -0.5, 0.5), TNTPrimed::class.java)
+            spawnTNT(blockLocation.add(0.5, -0.5, 0.5))
 //            blockLocation.subtract(0.0, 1.0, 0.0)
 //            world.getBlockAt(blockLocation).type = Material.AIR
         }, 20L)
     }
 
     @EventHandler
-    fun onTNTexplosion(event: ExplosionPrimeEvent) {
-        event.isCancelled = true
+    fun onTNTSandFall(event: EntityMoveEvent) {
+        if(event.entity !is FallingBlock) return
+        if(isInDeathZone(event.entity.location))
+            event.entity.remove()
+    }
+
+    private fun spawnTNT(location: Location){
+        val world = location.world
+        val tnt: FallingBlock = world.spawn(location, FallingBlock::class.java)
+        tnt.blockData = Material.TNT.createBlockData()
+        tnt.cancelDrop = true
+        tnt.dropItem = false
+    }
+
+    private fun isInDeathZone(location: Location): Boolean {
+        return location.y < getSpawnLocation().y - 5
     }
 }

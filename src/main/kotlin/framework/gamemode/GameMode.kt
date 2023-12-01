@@ -197,14 +197,20 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     /** wird aufgerufen, wenn der Spieler in die GameWorld teleportiert wird **/
     fun tpToGameSpawn(player: Player) {
+        //Bukkit.getScheduler().runTaskLater(fuxelSagt, Runnable {
         player.teleport(getSpawnLocation())
+        //}, 2)
     }
 
     fun tpPlayersToGame(vararg players: Player) {
-        for (player in players) {
-            Bukkit.getScheduler().runTaskLater(fuxelSagt, Runnable {
-                this.tpToGameSpawn(player)
-            }, 2)
+        var playersToBeTped = players
+        if (players.isEmpty()) {
+            playersToBeTped = framework.getPlayerManager().getPlayerList()
+                .map { it as Player }.toTypedArray()
+        }
+        Bukkit.getLogger().info("playersToBeTped: ${playersToBeTped.map { it.name }}")
+        for (player in playersToBeTped) {
+            this.tpToGameSpawn(player)
         }
     }
 
@@ -248,7 +254,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
     fun playerLoose(player: Player) {
         framework.getPlayerManager().playerLoose(player)
         for (p in fuxelSagt.server.onlinePlayers) {
-            p.sendMessage(Component.text("§c» ${p.name} ist ausgeschieden!"))
+            p.sendMessage(Component.text("§c» ${player.name} ist ausgeschieden!"))
         }
         checkGameScore()
     }
@@ -305,11 +311,10 @@ abstract class GameMode(private val framework: Framework) : Listener {
                 // TODO übergeben an framework?
             }
         }
-
     }
 
     fun startTimer() {
-        val timerTask: Runnable = Runnable {
+        val timerTask = Runnable {
             if (remainingTime <= 0) {
                 stop()
                 fuxelSagt.server.scheduler.cancelTask(taskID)

@@ -15,7 +15,7 @@ class JoinListener(val fuxelSagt: FuxelSagt) : Listener {
 
 //        val gui = TeleportGUI(fuxelSagt)
 //        gui.open(event.player)
-        event.getPlayer().teleport(Bukkit.getWorld("world")!!.spawnLocation); // TODO: Replace with proper lobby
+        event.player.teleport(Bukkit.getWorld("world")!!.spawnLocation); // TODO: Replace with proper lobby
     }
 
 }
