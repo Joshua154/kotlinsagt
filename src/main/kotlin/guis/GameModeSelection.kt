@@ -46,7 +46,7 @@ class GameModeSelection(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Game
 
         fuxelSagt.getGameModeManager().setActiveGameMode(gameMode)
 
-        gameMode.addToPlayers(player)
-        gameMode.tpPlayersToGame(player)
+        gameMode.addPlayers()
+        gameMode.tpToGameSpawn(player)
     }
 }

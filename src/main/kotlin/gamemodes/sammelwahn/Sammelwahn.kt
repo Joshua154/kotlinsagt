@@ -2,6 +2,7 @@ package gamemodes.sammelwahn
 
 import framework.Framework
 import framework.gamemode.GameMode
+import framework.gamemode.GameModeState
 import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.WorldType
@@ -47,10 +48,10 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         tpPlayersToGame()
-        isRunning = true
+        state = GameModeState.RUNNING
     }
 
     override fun stop() {
-        isRunning = false
+        state = GameModeState.STOPPED
     }
 }

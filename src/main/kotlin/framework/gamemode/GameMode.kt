@@ -18,7 +18,9 @@ abstract class GameMode(private val framework: Framework) : Listener {
     private val players: ArrayList<Player> = ArrayList()
     private val dead: ArrayList<Player> = ArrayList()
     private val points: HashMap<Player, Int> = HashMap()
-    protected var isRunning: Boolean = false
+    protected var state: GameModeState = GameModeState.PREPARING
+
+    // protected var isRunning: Boolean = false
     open var remainingTime = -1 // is set to roundTime on load, for possible countdown
     private var taskID: Int = -1
 
@@ -222,6 +224,15 @@ abstract class GameMode(private val framework: Framework) : Listener {
         return dead
     }
 
+    fun addPlayers() {
+        val players = fuxelSagt.getFramework().getPlayerManager().getPlayerList()
+        for (player in players) {
+            if (player != null && player.isOnline) {
+                this.addToPlayers(player)
+            }
+        }
+    }
+
     fun addToPlayers(vararg players: Player) {
         for (player in players) {
             this.setupPlayer(player);
@@ -277,17 +288,17 @@ abstract class GameMode(private val framework: Framework) : Listener {
     }
 
     fun checkGameScore() {
-        if (players.size == 1) {
-            for (p in fuxelSagt.server.onlinePlayers) {
-                p.sendMessage(Component.text("§6» ${players[0].name} hat gewonnen!"))
-                // TODO Win Animation
-                // TODO übergeben an framework?
-            }
-            if (isRunning) {
+        if (state == GameModeState.RUNNING) {
+            if (players.size == 1) {
+                for (p in fuxelSagt.server.onlinePlayers) {
+                    p.sendMessage(Component.text("§6» ${players[0].name} hat gewonnen!"))
+                    // TODO Win Animation
+                    // TODO übergeben an framework?
+                }
+                state = GameModeState.FINISHED
                 stop()
+                return
             }
-        }
-        if (!isRunning) {
             val survivors: List<Player>
             if (hasPoints) {
                 // if hasTeams
@@ -304,12 +315,18 @@ abstract class GameMode(private val framework: Framework) : Listener {
             } else {
                 // if hasTeams
                 // else
-                survivors = fuxelSagt.server.onlinePlayers as List<Player>
+                survivors = fuxelSagt.server.onlinePlayers as List<Player>  // ?? crab
             }
             for (p in survivors) {
-                p.sendMessage(Component.text("§6» ${players.size} Spieler haben überlebt!"))
+                if (players.size <= 0) {
+                    p.sendMessage(Component.text("§6» Keiner hat überlebt?"))
+                } else {
+                    p.sendMessage(Component.text("§6» ${players.size} Spieler haben überlebt!"))
+                }
                 // TODO übergeben an framework?
             }
+            state = GameModeState.FINISHED
+            stop()
         }
     }
 

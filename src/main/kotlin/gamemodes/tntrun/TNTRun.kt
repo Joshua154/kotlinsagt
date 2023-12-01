@@ -2,7 +2,14 @@ package gamemodes.tntrun
 
 import framework.Framework
 import framework.gamemode.GameMode
+import framework.gamemode.GameModeState
+import io.papermc.paper.event.entity.EntityMoveEvent
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.entity.Entity
+import org.bukkit.entity.FallingBlock
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ExplosionPrimeEvent
@@ -48,20 +55,23 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         tpPlayersToGame()
+        Bukkit.getLogger().info("TPed!")
         startTimer()
-        isRunning = true
+        state = GameModeState.RUNNING
     }
 
     override fun stop() {
         checkGameScore()
-        isRunning = false
+        state = GameModeState.FINISHED
     }
 
-    override fun cleanup() {}
+    override fun cleanup() {
+        state = GameModeState.STOPPED
+    }
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (!isPlayer(event.player) || !isRunning) return
+        if (!isPlayer(event.player) || state != GameModeState.RUNNING) return
 
         val blockLocation = event.to.block.location
         if (isInDeathZone(blockLocation)) {  // REVIEW die Spawnlocation ist irgendwie falsch
@@ -73,7 +83,8 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         if (blockLocation == event.from.block.location) return
 
         val materialsToReplace = arrayOf(Material.TNT, Material.SAND, Material.GRAVEL)
-        blockLocation.subtract(0.0, 1.0, 0.0)
+        blockLocation.subtract(0.0, 2.0, 0.0)
+        // blockLocation.subtract(0.0, 1.0, 0.0)
 
         val world = event.player.location.world
         if (world.getBlockAt(blockLocation).type !in materialsToReplace) return

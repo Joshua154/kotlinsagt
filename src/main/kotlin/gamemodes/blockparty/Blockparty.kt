@@ -3,6 +3,7 @@ package gamemodes.blockparty
 import framework.Framework
 import framework.configuration.Configurable
 import framework.gamemode.GameMode
+import framework.gamemode.GameModeState
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -172,7 +173,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     }
 
     private fun updateBossbar() {
-        if (this.isRunning) {
+        if (state == GameModeState.RUNNING) {
             if (this.secondsRemaining > 0) {
                 this.bossBar.name(
                     /*Component.text("✔✔✔ ").color(NamedTextColor.GREEN)
@@ -211,7 +212,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         this.getPlayers().forEach { it.teleport(Location(Bukkit.getWorld(this.worldName), 0.0, 65.0, 0.0)); };
-        this.isRunning = true;
+        state = GameModeState.RUNNING
 
         this.task = object : BukkitRunnable() {
             var i: Int = 0;
@@ -249,11 +250,12 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
             this.task.cancel();
         }
         this.getPlayers().forEach { player -> player.inventory.clear() }
-        this.isRunning = false;
+        state = GameModeState.FINISHED
     }
 
     override fun cleanup() {
         this.getPlayers().forEach { player -> player.hideBossBar(this.bossBar) }
+        state = GameModeState.STOPPED
     }
 
     @EventHandler
@@ -273,31 +275,30 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (!this.isPlayer(event.player) || !this.isRunning) return;
+        if (!isPlayer(event.player) || state != GameModeState.RUNNING) return
 
         val blockLocation = event.to.block.location;
         if (blockLocation.y < 60) {
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR;
-            this.addToDead(event.player);
-            this.playerLoose(event.player);
-            this.checkGameScore();
+            this.addToDead(event.player)
+            this.playerLoose(event.player)
             return;
         }
     }
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
-        event.setCancelled(true);
+        event.isCancelled = true;
     }
 
     @EventHandler
     fun onPlayerSwapHandItems(event: PlayerSwapHandItemsEvent) {
-        event.setCancelled(true);
+        event.isCancelled = true;
     }
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (event.hand != EquipmentSlot.HAND || (event.action != Action.RIGHT_CLICK_AIR && event.action != Action.RIGHT_CLICK_BLOCK) || event.item?.type != Material.FEATHER || !this.isRunning) return;
+        if (event.hand != EquipmentSlot.HAND || (event.action != Action.RIGHT_CLICK_AIR && event.action != Action.RIGHT_CLICK_BLOCK) || event.item?.type != Material.FEATHER || state != GameModeState.RUNNING) return;
         val player: Player = event.player;
         player.velocity = player.velocity.setY(1.0.coerceAtLeast(player.velocity.y + 1));
         event.item?.amount = 0;

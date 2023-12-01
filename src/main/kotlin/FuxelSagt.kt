@@ -85,6 +85,10 @@ class FuxelSagt : JavaPlugin() {
         return this.gameControlManager
     }
 
+    fun getFramework(): Framework {
+        return this.framework;
+    }
+
     fun sendPlayerMessage(player: Player, message: Component) {
         player.sendMessage(
             MiniMessage.miniMessage()
