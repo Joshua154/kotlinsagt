@@ -1,10 +1,7 @@
 import commands.StartCommand
 import commands.TestCommand
 import framework.Framework
-import framework.gamemodes.Blockparty
-import framework.gamemodes.GameMode
-import framework.gamemodes.Sammelwahn
-import framework.gamemodes.TNTRun
+import framework.gamemodes.*
 import framework.manager.Colors
 import framework.manager.GameModeManager
 import framework.manager.gameControl.GameControlManager
@@ -61,6 +58,7 @@ class FuxelSagt : JavaPlugin() {
         gameModeManager.addGameMode(TNTRun(framework))
         gameModeManager.addGameMode(Sammelwahn(framework))
         gameModeManager.addGameMode(Blockparty(framework))
+        gameModeManager.addGameMode(Dropper(framework))
     }
 
 //    fun getConfiguration(): Config {
