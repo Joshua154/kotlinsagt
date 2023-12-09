@@ -301,7 +301,7 @@ class MazeBuilder(private val dimension: Int) {
         )
 
         workLocation = exit.add(sizeOfBlocks.toDouble() + 1, 0.0, 1.0)
-        finishLine = Pair(workLocation.clone().add(sizeOfBlocks - 1.0, 1.0, 0.0), Vector(0.0, 0.0, sizeOfBlocks.toDouble() + 1))
+        finishLine = Pair(workLocation.clone().add(sizeOfBlocks - 1.0, 1.0, 0.0), Vector(0.0, 0.0, sizeOfBlocks - 1.0))
         for (x in 0 until sizeOfBlocks) {
             for (z in 0 until sizeOfBlocks) {
                 for (y in 0 until height) {

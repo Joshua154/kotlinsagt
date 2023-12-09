@@ -10,6 +10,7 @@ import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
@@ -74,6 +75,8 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
+        if (event.to.block.location == event.from.block.location)
+            return
         val player = event.player
         if (!isPlayer(player) || state != GameModeState.RUNNING) return
         if (finishedPlayers.contains(player)){
@@ -93,19 +96,40 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
     private fun isOverFinishLine(location: Location): Boolean {
         val point = location.block.location.clone().toVector()
         val v1 = mb.finishLine().first.block.location.clone().toVector()
-        val v2 = mb.finishLine().first.block.location.clone().add(mb.finishLine().second).toVector()
-        val yVec = Vector(0.0, 1.0, 0.0)
-        return isBetween(point, v1.subtract(yVec), v2.subtract(yVec)) ||
-                isBetween(point, v1.add(yVec), v2.add(yVec)) ||
-                isBetween(point, v1.add(yVec), v2.add(yVec))
+        val v2 = mb.finishLine().second.clone()
+        return isBetween(point, v1, v2)
     }
 
-    private fun isBetween(pointVector: Vector, vector1: Vector, vector2: Vector): Boolean {
-        val diffVec = vector2.clone().subtract(vector1)
-        val dotProd = diffVec.clone().dot(pointVector.clone().subtract(vector1))
+    private fun isBetween(pointVector: Vector, lineStart: Vector, direction: Vector): Boolean {
+        val distance = pointVector.clone().subtract(lineStart).length()
+        val dirLen = direction.length() + 1
+        if (distance > dirLen)
+            return false
 
-        return dotProd >= 0
-                && dotProd <= vector1.distance(vector2)
-                && pointVector.clone().subtract(vector1).crossProduct(diffVec).lengthSquared() == 0.0
+        pointVector.y = 0.0
+        lineStart.y = 0.0
+        direction.y = 0.0
+        return isPointOnLine(pointVector, lineStart, direction)
+    }
+
+    private fun isPointOnLine(point: Vector, lineStart: Vector, lineDirection: Vector): Boolean {
+//        val lineDirectionNormalized = lineDirection.normalize().clone()
+//        val directionVector = point.clone().subtract(lineStart)
+//        val projection = directionVector.clone().dot(lineDirectionNormalized)
+//        return projection >= 0 && projection <= directionVector.length()
+        var len = lineDirection.length()
+        while (len > 0) {
+            val v = lineDirection.clone().normalize().multiply(len)
+            if (point.distanceSquared(lineStart.clone().add(v)) < 0.1) {
+                return true
+            }
+            len -= 0.1
+        }
+        return false
+    }
+
+    @EventHandler
+    fun onPlayerDeath(event: PlayerDeathEvent) {
+        event.entity.teleport(getSpawnLocation())
     }
 }
