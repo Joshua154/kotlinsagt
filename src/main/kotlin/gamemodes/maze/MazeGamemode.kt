@@ -25,7 +25,7 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
     override val displayItem: ItemStack = ItemStack(Material.DIRT_PATH)
     override val description: String = "placeholder"
     override val minPlayers: Int = 1
-    override val maxPlayers: Int = 100
+    override val maxPlayers: Int = 500
     override val worldName: String = "maze"
     override val hasPreBuiltWorld: Boolean = false
     override val roundTime: Int = 60 * 5
@@ -34,10 +34,13 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
     override val isFinale: Boolean = false
 
     @Configurable(Material.SMOOTH_QUARTZ, "Size of the maze")
-    var size: Int = 51
+    var size: Int = 51 //default 51
 
     @Configurable(Material.SMOOTH_QUARTZ, "Size Block")
     var sizeOfBlocks: Int = 3 //best 2 or 3 //TODO: strange offset with 1 and 4++
+
+    @Configurable(Material.SMOOTH_QUARTZ, "Height of the maze")
+    var height: Int = 6
 
     private lateinit var mb: MazeBuilder
     private val finishedPlayers: MutableSet<Player> = mutableSetOf()
@@ -52,18 +55,23 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
 
     override fun prepare() {
         load()
-        mb = MazeBuilder(size)
+        mb = MazeBuilder(framework, size)
         mb.buildMaze(
+            framework = framework,
             sizeOfBlocks = sizeOfBlocks,
-            height = 6,
+            height = height,
             center = getSpawnLocation().clone().subtract(0.0, 1.0, 0.0)
         )
         registerEventListener()
-        start()
     }
 
     override fun start() {
         tpPlayersToGame()
+        //TODO: Start Countdown
+        //TODO: Start logic
+
+        mb.removeSpawnPartionWall()
+
         state = GameModeState.RUNNING
     }
 

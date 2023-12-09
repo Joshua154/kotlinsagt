@@ -1,18 +1,19 @@
 package gamemodes.maze
 
+import framework.Framework
 import gamemodes.maze.generator.MazeCell
 import gamemodes.maze.generator.MazeGenerator
-import org.apache.commons.lang3.ObjectUtils
-import org.apache.commons.lang3.ObjectUtils.Null
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.data.BlockData
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.floor
+import kotlin.properties.Delegates
 
 
-class MazeBuilder(private val dimension: Int) {
+class MazeBuilder(private val framework: Framework, private val dimension: Int) {
     /*
             private val stack: Stack<Node> = Stack()
             private val rand: Random = Random()
@@ -89,20 +90,29 @@ class MazeBuilder(private val dimension: Int) {
     private var spawnLocation: Location? = null
     private lateinit var finishLine: Pair<Location, Vector>
 
-    fun buildMaze(sizeOfMaze: Int = dimension, sizeOfBlocks: Int, height: Int, center: Location) {
-        val mazeBuilder = MazeBuilder(sizeOfMaze)
+    private var sizeOfMaze by Delegates.notNull<Int>()
+    private var sizeOfBlocks by Delegates.notNull<Int>()
+    private var height by Delegates.notNull<Int>()
+    private lateinit var center: Location
 
-//        val wallBlockData = arrayOf(Material.OAK_LEAVES.createBlockData())
-//        val floorBlockData = arrayOf(Material.DIRT_PATH.createBlockData())
-//        val underWallBlockData = arrayOf(Material.OAK_LOG.createBlockData())
+    private var wallBlockData = arrayOf(
+        Material.SMOOTH_QUARTZ.createBlockData(), Material.QUARTZ_BRICKS.createBlockData(),
+        Material.QUARTZ_BLOCK.createBlockData(), Material.QUARTZ_PILLAR.createBlockData()
+    )
+    private var floorBlockData = arrayOf(Material.GRAY_CONCRETE.createBlockData())
+    private var underWallBlockData = floorBlockData
 
+    fun buildMaze(framework: Framework, sizeOfMaze: Int = dimension, sizeOfBlocks: Int, height: Int, center: Location) {
+        val mazeBuilder = MazeBuilder(framework, sizeOfMaze)
 
-        val wallBlockData = arrayOf(
-            Material.SMOOTH_QUARTZ.createBlockData(), Material.QUARTZ_BRICKS.createBlockData(),
-            Material.QUARTZ_BLOCK.createBlockData(), Material.QUARTZ_PILLAR.createBlockData()
-        )
-        val floorBlockData = arrayOf(Material.GRAY_CONCRETE.createBlockData())
-        val underWallBlockData = floorBlockData
+        this.sizeOfMaze = sizeOfMaze
+        this.sizeOfBlocks = sizeOfBlocks
+        this.height = height
+        this.center = center
+
+        wallBlockData = arrayOf(Material.OAK_LEAVES.createBlockData())
+        floorBlockData = arrayOf(Material.DIRT_PATH.createBlockData())
+        underWallBlockData = arrayOf(Material.OAK_LOG.createBlockData())
 
         buildBottomLayer(
             center,
@@ -248,9 +258,9 @@ class MazeBuilder(private val dimension: Int) {
         platformSize: Int = sizeOfBlocks * 3 * 2,
         height: Int,
         entrance: Location,
-        wallBlockData: Array<BlockData>,
-        floorBlockData: Array<BlockData>,
-        underWallBlockData: Array<BlockData>
+        wallBlockData: Array<BlockData> = this.wallBlockData,
+        floorBlockData: Array<BlockData> = this.floorBlockData,
+        underWallBlockData: Array<BlockData> = this.underWallBlockData
     ) {
         var workLocation = entrance.clone().subtract(platformSize.toDouble(), 0.0, platformSize * 0.5 - 2)
 
@@ -282,9 +292,10 @@ class MazeBuilder(private val dimension: Int) {
             }
         }
         this.spawnLocation = entrance.clone()
-            .add(-2.5*sizeOfBlocks, 1.0, floor(sizeOfBlocks/2.0) + 1.5)
-            .setDirection(Vector(1,0,0)
-        )
+            .add(-2.5 * sizeOfBlocks, 1.0, floor(sizeOfBlocks / 2.0) + 1.5)
+            .setDirection(
+                Vector(1, 0, 0)
+            )
     }
 
     fun buildExit(
@@ -348,5 +359,22 @@ class MazeBuilder(private val dimension: Int) {
 
     fun finishLine(): Pair<Location, Vector> {
         return finishLine
+    }
+
+    fun removeSpawnPartionWall() {
+        this.maze.getEntrance()?.let {
+            val workLocation =
+                cellToLocation(center, it, sizeOfMaze, sizeOfBlocks).clone().add(0.0, 0.0, sizeOfBlocks.toDouble())
+            for (z in 0 until sizeOfBlocks) {
+                for (y in 0 until height) {
+                    val temp: Location = workLocation.clone()
+                    temp.subtract(0.0, -y.toDouble(), z.toDouble())
+                    if (y == 0)
+                        temp.block.blockData = getRandomBlockData(floorBlockData)
+                    else
+                        temp.block.blockData = Material.AIR.createBlockData()
+                }
+            }
+        }
     }
 }
