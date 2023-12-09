@@ -139,6 +139,10 @@ abstract class GameMode(private val framework: Framework) : Listener {
 //            )
     }
 
+    fun getWorld(): World {
+        return fuxelSagt.server.getWorld(worldName)!!
+    }
+
     /** wird aufgerufen, wenn der Gamemode entladen wird **/
     fun unload() {
         for (player in this.players) {
