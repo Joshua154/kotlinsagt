@@ -2,6 +2,7 @@ package gamemodes.blockparty
 
 import framework.Framework
 import framework.configuration.Configurable
+import framework.configuration.ConfigurableValueInterface
 import framework.gamemode.GameMode
 import framework.gamemode.GameModeState
 import net.kyori.adventure.bossbar.BossBar
@@ -56,14 +57,17 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     override val isFinale: Boolean = false
 
     // In-game Vars
-    @Configurable(Material.IRON_BARS, "Größe der Map")
+    @Configurable(Material.IRON_BARS, "Größe der Map", "Größe der Map", ConfigurableValueInterface.Type.LIMITLESS_INTEGER)
     private val bounds: Int = 50;
 
-    @Configurable(Material.GREEN_STAINED_GLASS_PANE, "Sekunden zum Suchen der Richtigen Farbe")
+    @Configurable(Material.GREEN_STAINED_GLASS_PANE, "Sekunden zum Suchen der Richtigen Farbe", "Suchphase")
     private val secondsToSearch: Int = 4;
 
-    @Configurable(Material.RED_STAINED_GLASS_PANE, "Sekunden zum Ausruhen zwischen den Suchphasen")
+    @Configurable(Material.RED_STAINED_GLASS_PANE, "Sekunden zum Ausruhen zwischen den Suchphasen", "Ausruhphase")
     private val secondsPause: Int = 3;
+
+    @Configurable(Material.FEATHER, "Sollen die Spieler einen Boost bekommen?", "Boost?")
+    private var shouldGetBoost: Boolean = true;
 
     private lateinit var task: BukkitTask;
     private lateinit var bossBar: BossBar;
@@ -99,7 +103,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
         this.sendStartupMessage(player);
         player.inventory.clear();
         player.gameMode = org.bukkit.GameMode.ADVENTURE;
-        player.inventory.setItem(4, ItemBuilder(Material.FEATHER).setName(ChatColor.GOLD.toString() + "Boost").build())
+        if (shouldGetBoost) player.inventory.setItem(4, ItemBuilder(Material.FEATHER).setName(ChatColor.GOLD.toString() + "Boost").build())
         player.health = player.maxHealth;
         player.fireTicks = 0;
         player.saturation = 20F;
@@ -147,7 +151,19 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
     }
 
     override fun applyConfiguration() {
-        this.generatePattern(TrigonometricNoise(), 0);
+        this.getPlayers().forEach { it.inventory.clear()  }
+        this.getPlayers().forEach { if (shouldGetBoost) it.inventory.setItem(4, ItemBuilder(Material.FEATHER).setName(ChatColor.GOLD.toString() + "Boost").build()) }
+        var previousBounds: Int = 0;
+        val world: World? = Bukkit.getWorld(this.worldName);
+        Thread {
+            while (world?.getType(previousBounds, 64, 0) != Material.AIR) previousBounds++;
+            for (x in -previousBounds..previousBounds) {
+                for (z in -previousBounds..previousBounds) {
+                    Bukkit.getScheduler().callSyncMethod(this.fuxelSagt) { world.setType(x, 64, z, Material.AIR) };
+                }
+            }
+            Bukkit.getScheduler().callSyncMethod(this.fuxelSagt) { this.generatePattern(TrigonometricNoise(), 0) };
+        }.start();
     }
 
     override fun unregisterEventListener() {
@@ -161,7 +177,7 @@ class Blockparty(private val framework: Framework) : GameMode(framework) {
 
     private fun updateHotbar(player: Player) {
         for (slot in 0..8) {
-            if (slot == 4) continue;
+            if (shouldGetBoost && slot == 4) continue;
             player.inventory.setItem(
                 slot,
                 ItemBuilder(this.currentColor!!.block).setName(

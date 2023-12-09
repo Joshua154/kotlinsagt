@@ -10,3 +10,5 @@ commands:
   testcommand:
     description: 'testcommand'
   teststart:
+  configure:
+    aliases: [ configure, einstellungen, settings ]

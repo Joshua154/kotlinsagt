@@ -16,6 +16,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
     private var page: Int = 0
     private val itemsPerPage: Int = 9 * 5
     private lateinit var player: Player
+
     private fun getPageGUIKey(key: String): NamespacedKey = NamespacedKey("fuxelsagt.pagegui.item", key)
 
     private fun getPage(): Int {
@@ -26,12 +27,11 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         return ceil(getContent().size.div(itemsPerPage.coerceAtLeast(1).toFloat())).toInt()
     }
 
-    private fun switchPage(direction: Boolean) {
-        //direction: false -> back, true -> further
+    private fun switchPage(direction: Direction) {
         if (getPageCount() == 1) return
 
-        if (direction) page += 1
-        else page -= 1
+        if (direction == Direction.FORWARD) page += 1
+        else if (direction == Direction.BACKWARD) page -= 1
 
         if (page < 0) page = 0
         if (page > getPageCount()) page = getPageCount() - 1
@@ -47,9 +47,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         )
     }
 
-    override fun getInventory(): Inventory {
-        val inventory: Inventory = Bukkit.createInventory(this, itemsPerPage + 9, guiTitle)
-
+    override fun populateInventory(inventory: Inventory) {
         val itemsOnPage: List<ItemStack> = getItemsFromPage(this.page)
 
         for (i in 0..<itemsPerPage + 1) {
@@ -85,27 +83,37 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
                     .build()
             )
         }
+    }
 
+    override fun getInventory(): Inventory {
+        val inventory: Inventory = Bukkit.createInventory(this, itemsPerPage + 9, guiTitle)
+        this.populateInventory(inventory);
         return inventory
     }
 
-    override fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
+    override fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType, inventory: Inventory) {
         if (clickedItem == null) return
         val itemMeta = clickedItem.itemMeta
         val container = itemMeta.persistentDataContainer
         if (container.has(getPageGUIKey("type"))) {
             when (container.get(getPageGUIKey("type"), PersistentDataType.STRING)) {
-                "back" -> return switchPage(false)
-                "further" -> return switchPage(true)
+                "back" -> return switchPage(Direction.BACKWARD)
+                "further" -> return switchPage(Direction.FORWARD)
             }
         }
 
         onItemClick(player, slot, clickedItem, clickType)
+        this.update(player, inventory);
     }
 
     override fun open(player: Player) {
-        player.openInventory(inventory)
-        this.player = player
+        val inventory: Inventory = this.getInventory();
+        player.openInventory(inventory);
+        this.player = player;
+    }
+
+    override fun update(player: Player, inventory: Inventory) {
+        this.populateInventory(inventory);
     }
 
     fun refresh() {
@@ -113,8 +121,15 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
     }
 
     abstract fun getContent(): List<ItemStack>
+
     abstract fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
+
     open fun onPageSwitch() {
         return
+    }
+
+    public enum class Direction {
+        BACKWARD,
+        FORWARD
     }
 }

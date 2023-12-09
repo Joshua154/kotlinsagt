@@ -10,10 +10,17 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import java.io.File
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotations
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 
 abstract class GameMode(private val framework: Framework) : Listener {
 
-    private val fuxelSagt: FuxelSagt = framework.getFuxelSagt()
+    val fuxelSagt: FuxelSagt = framework.getFuxelSagt()
 
     private val players: ArrayList<Player> = ArrayList()
     private val dead: ArrayList<Player> = ArrayList()
@@ -52,19 +59,34 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     fun getConfigurableValues(): List<ConfigurableValueInterface<out Any>> {
         val values: MutableList<ConfigurableValueInterface<out Any>> = mutableListOf();
-        for (field in this.javaClass.declaredFields) {
-            for (annotation in field.declaredAnnotations) {
-                if (annotation is Configurable) {
-                    field.isAccessible = true;
+        for (property in this::class.declaredMemberProperties) {
+            for (annotation in property.findAnnotations(Configurable::class)) {
+                    property.isAccessible = true;
+
+                    // Lazy set defaults
+                    if (!ConfigurableValueInterface.defaults.containsKey(this::class)) {
+                        val properties = this::class.declaredMemberProperties;
+                        val defaults: MutableMap<KProperty<*>, Any> = HashMap();
+                        properties.forEach {
+                            if (it.findAnnotations(Configurable::class).isNotEmpty()) {
+                                it.isAccessible = true;
+                                defaults[it] = it.javaField!!.get(this) as Any
+                            }
+                        }
+                        ConfigurableValueInterface.defaults[this::class] = defaults;
+                    }
+
                     values.add(
                         ConfigurableValueInterface(
                             annotation.name,
+                            annotation.shortenedName,
                             annotation.displayItem,
-                            field,
-                            field.get(this)
+                            annotation.type,
+                            property.javaField!!.get(this) as Any,
+                            this::class,
+                            property
                         )
                     );
-                }
             }
         }
         return values;

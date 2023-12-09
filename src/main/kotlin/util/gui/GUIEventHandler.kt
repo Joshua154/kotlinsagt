@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class GUIEH : Listener {  // Graphical User Interface Event Handler
+class GUIEventHandler : Listener {  // Graphical User Interface Event Handler
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         if (event.inventory.holder !is IGUI) return
@@ -15,7 +15,8 @@ class GUIEH : Listener {  // Graphical User Interface Event Handler
         event.isCancelled = true
         igui.onClick(
             event.whoClicked as Player, event.rawSlot, event.getCurrentItem(),
-            event.click
+            event.click,
+            event.inventory
         )
     }
 }

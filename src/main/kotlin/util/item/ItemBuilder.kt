@@ -224,7 +224,7 @@ class ItemBuilder() {
         if (itemStack.itemMeta !is SkullMeta) return this
         val meta: SkullMeta = itemStack.itemMeta as SkullMeta
         val finalUrl = "https://textures.minecraft.net/texture/$url"
-        val gameProfile = GameProfile(UUID.randomUUID(), null)
+        val gameProfile = GameProfile(UUID.randomUUID(), UUID.randomUUID().toString().replace("-", "_"))
         val data = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", finalUrl).toByteArray())
         gameProfile.getProperties().put("textures", Property("textures", String(data)))
         try {

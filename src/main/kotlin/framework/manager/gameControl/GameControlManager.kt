@@ -1,6 +1,7 @@
 package framework.manager.gameControl
 
 import framework.Framework
+import guis.ConfigurationGUI
 import guis.GameModeSelection
 import guis.TeleportGUI
 import net.kyori.adventure.text.Component
@@ -31,6 +32,15 @@ class GameControlManager(val framework: Framework) : Listener {
                 Component.text("TODO"),
                 Material.CHEST,
                 GameModeSelection(framework.getFuxelSagt())
+            )
+        ),
+        Pair(
+            "configuration",
+            GameControlItem(
+                Component.text("Einstellungen"),
+                Component.text("TODO"),
+                Material.GRAY_CONCRETE,
+                ConfigurationGUI(framework.getFuxelSagt())
             )
         )
     )

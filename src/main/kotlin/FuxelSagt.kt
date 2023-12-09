@@ -1,3 +1,4 @@
+import commands.ConfigureCommand
 import commands.StartCommand
 import commands.TestCommand
 import framework.Framework
@@ -7,7 +8,6 @@ import gamemodes.sammelwahn.Sammelwahn
 import gamemodes.tntrun.TNTRun
 import framework.manager.Colors
 import framework.manager.GameModeManager
-import framework.manager.PlayerManager
 import framework.manager.gameControl.GameControlManager
 import gamemodes.maze.Maze
 import listener.JoinListener
@@ -17,7 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import util.configuration.Config
-import util.gui.GUIEH
+import util.gui.GUIEventHandler
 import java.io.File
 
 class FuxelSagt : JavaPlugin() {
@@ -57,12 +57,13 @@ class FuxelSagt : JavaPlugin() {
     private fun registerCommands() {
         getCommand("testcommand")?.setExecutor(TestCommand(this))
         getCommand("teststart")?.setExecutor(StartCommand(this))
+        getCommand("configure")?.setExecutor(ConfigureCommand(this))
     }
 
     private fun registerListeners() {
         val pluginManager = server.pluginManager
         pluginManager.registerEvents(JoinListener(this), this)
-        pluginManager.registerEvents(GUIEH(), this) // GUI Event Handler
+        pluginManager.registerEvents(GUIEventHandler(), this) // GUI Event Handler
         pluginManager.registerEvents(this.gameControlManager, this) // GUI Event Handler
     }
 
