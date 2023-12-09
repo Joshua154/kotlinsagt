@@ -13,7 +13,7 @@ import java.io.File
 
 abstract class GameMode(private val framework: Framework) : Listener {
 
-    private val fuxelSagt: FuxelSagt = framework.getFuxelSagt()
+    val fuxelSagt: FuxelSagt = framework.getFuxelSagt()
 
     private val players: ArrayList<Player> = ArrayList()
     private val dead: ArrayList<Player> = ArrayList()
@@ -193,7 +193,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     open fun cleanup() {}
 
-    fun getSpawnLocation(): Location {
+    open fun getSpawnLocation(): Location {
         return fuxelSagt.server.getWorld(worldName)!!.spawnLocation
     }
 

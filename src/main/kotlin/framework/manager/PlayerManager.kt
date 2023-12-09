@@ -8,7 +8,7 @@ import java.util.*
 
 class PlayerManager(private val framework: Framework) {
     private val players: MutableSet<UUID> = mutableSetOf()
-    private var spectators:MutableSet<UUID> = mutableSetOf()
+    private var spectators: MutableSet<UUID> = mutableSetOf()
     private var fuxel: Optional<UUID> = Optional.empty()
 
     fun uuidToPlayer(uuid: UUID): Player? {
@@ -31,11 +31,11 @@ class PlayerManager(private val framework: Framework) {
     }
 
     // GETTER
-    fun getPlayerUUIDList() : Set<UUID> {
+    fun getPlayerUUIDList(): Set<UUID> {
         return players
     }
 
-    fun getPlayerList() : Set<Player?> {
+    fun getPlayerList(): Set<Player?> {
         return players.map { framework.getFuxelSagt().server.getPlayer(it) }.toSet()
     }
 

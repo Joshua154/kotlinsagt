@@ -7,9 +7,8 @@ import gamemodes.sammelwahn.Sammelwahn
 import gamemodes.tntrun.TNTRun
 import framework.manager.Colors
 import framework.manager.GameModeManager
-import framework.manager.PlayerManager
 import framework.manager.gameControl.GameControlManager
-import gamemodes.maze.Maze
+import gamemodes.maze.MazeGamemode
 import listener.JoinListener
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -19,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import util.configuration.Config
 import util.gui.GUIEH
 import java.io.File
+import java.util.stream.Stream
 
 class FuxelSagt : JavaPlugin() {
 
@@ -70,7 +70,7 @@ class FuxelSagt : JavaPlugin() {
         gameModeManager.addGameMode(TNTRun(framework))
         gameModeManager.addGameMode(Sammelwahn(framework))
         gameModeManager.addGameMode(Blockparty(framework))
-        gameModeManager.addGameMode(Maze(framework))
+        gameModeManager.addGameMode(MazeGamemode(framework))
     }
 
 //    fun getConfiguration(): Config {
@@ -95,5 +95,9 @@ class FuxelSagt : JavaPlugin() {
                 .deserialize("<gray>[" + Colors.FUXELSAGT.prefix + "FuxelSagt" + Colors.FUXELSAGT.suffix + "]: <gray>")
                 .append(message)
         )
+    }
+
+    fun sendPlayerMessage(message: Component) {
+        server.onlinePlayers.forEach { player -> if(player!=null) sendPlayerMessage(player, message) }
     }
 }
