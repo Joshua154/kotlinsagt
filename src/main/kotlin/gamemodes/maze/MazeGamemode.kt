@@ -10,6 +10,9 @@ import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
@@ -80,8 +83,12 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
         val player = event.player
         if (!isPlayer(player) || state != GameModeState.RUNNING) return
         if (finishedPlayers.contains(player)){
-            if(isOverFinishLine(event.to.block.location.clone()))
+            if(isOverFinishLine(event.to.block.location.clone())){
+                event.player.velocity = Vector(1.0, 0.3, 0.0)
+            }
+            else if(isOverFinishLine(event.to.block.location.clone().add(1.0, 0.0, 0.0))){
                 event.isCancelled = true
+            }
             return
         }
 
@@ -129,7 +136,28 @@ class MazeGamemode(private val framework: Framework) : GameMode(framework) {
     }
 
     @EventHandler
-    fun onPlayerDeath(event: PlayerDeathEvent) {
-        event.entity.teleport(getSpawnLocation())
+    fun onPlayerDeath(event: EntityDamageEvent) {
+        if (event.entity !is Player) return
+        val player = event.entity as Player
+
+        if (!isPlayer(player)) return
+        if (player.health - event.finalDamage > 0) return
+        tpToGameSpawn(player)
+
+        player.health = 20.0
+        player.foodLevel = 20
+
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onFoodLevelChange(event: FoodLevelChangeEvent) {
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onBlockBreak(event: BlockBreakEvent) {
+        if (event.player.hasPermission("fuxelsagt.admin")) return
+        event.isCancelled = true
     }
 }

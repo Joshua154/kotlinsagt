@@ -92,9 +92,17 @@ class MazeBuilder(private val dimension: Int) {
     fun buildMaze(sizeOfMaze: Int = dimension, sizeOfBlocks: Int, height: Int, center: Location) {
         val mazeBuilder = MazeBuilder(sizeOfMaze)
 
-        val wallBlockData = arrayOf(Material.OAK_LEAVES.createBlockData())
-        val floorBlockData = arrayOf(Material.DIRT_PATH.createBlockData())
-        val underWallBlockData = arrayOf(Material.OAK_LOG.createBlockData())
+//        val wallBlockData = arrayOf(Material.OAK_LEAVES.createBlockData())
+//        val floorBlockData = arrayOf(Material.DIRT_PATH.createBlockData())
+//        val underWallBlockData = arrayOf(Material.OAK_LOG.createBlockData())
+
+
+        val wallBlockData = arrayOf(
+            Material.SMOOTH_QUARTZ.createBlockData(), Material.QUARTZ_BRICKS.createBlockData(),
+            Material.QUARTZ_BLOCK.createBlockData(), Material.QUARTZ_PILLAR.createBlockData()
+        )
+        val floorBlockData = arrayOf(Material.GRAY_CONCRETE.createBlockData())
+        val underWallBlockData = floorBlockData
 
         buildBottomLayer(
             center,
