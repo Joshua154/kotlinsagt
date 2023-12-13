@@ -1,8 +1,6 @@
-package gamemodes.sammelwahn
+package framework.gamemodes
 
 import framework.Framework
-import framework.gamemode.GameMode
-import framework.gamemode.GameModeState
 import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.WorldType
@@ -19,7 +17,7 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
         "placeholder"
     override val minPlayers: Int = 3
     override val maxPlayers: Int = Int.MAX_VALUE
-    override val hasPreBuiltWorld: Boolean = false
+    override val hasPreBuildWorld: Boolean = false
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
@@ -48,10 +46,10 @@ class Sammelwahn(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         tpPlayersToGame()
-        state = GameModeState.RUNNING
+        isRunning = true
     }
 
     override fun stop() {
-        state = GameModeState.STOPPED
+        isRunning = false
     }
 }
