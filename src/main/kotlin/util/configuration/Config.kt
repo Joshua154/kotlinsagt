@@ -8,10 +8,8 @@ import java.io.File
 
 class Config {
 
-    class Settings {}
-    // class TEST {}
-
-    val test = 1;
+    class Settings {
+    }
 
     val settings: Settings = Settings()
 

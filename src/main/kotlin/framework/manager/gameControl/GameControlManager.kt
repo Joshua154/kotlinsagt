@@ -50,14 +50,12 @@ class GameControlManager(val framework: Framework) : Listener {
     }
 
     fun giveItems(player: Player) {
-        var i = 0
         items.forEach { (id, item) ->
-            player.inventory.setItem(i,
+            player.inventory.addItem(
                 ItemBuilder(item.getItem())
                     .addPersistentDataContainer(getItemKey("id"), PersistentDataType.STRING, id)
                     .build()
             )
-            i++
         }
     }
 }

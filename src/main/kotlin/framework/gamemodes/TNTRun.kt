@@ -1,15 +1,7 @@
-package gamemodes.tntrun
+package framework.gamemodes
 
 import framework.Framework
-import framework.gamemode.GameMode
-import framework.gamemode.GameModeState
-import io.papermc.paper.event.entity.EntityMoveEvent
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.Entity
-import org.bukkit.entity.FallingBlock
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ExplosionPrimeEvent
@@ -28,7 +20,7 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
                 "verschwindet dieser nach ein paar Sekunden. Das Ziel ist es, der letzte Spieler zu sein."
     override val minPlayers: Int = 1 // COMBAK change to 3 later
     override val maxPlayers: Int = Int.MAX_VALUE
-    override val hasPreBuiltWorld: Boolean = true
+    override val hasPreBuildWorld: Boolean = true
 
     // Modus
     override val roundTime: Int = 60 * 5 // 5 minutes
@@ -55,26 +47,23 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
 
     override fun start() {
         tpPlayersToGame()
-        Bukkit.getLogger().info("TPed!")
         startTimer()
-        state = GameModeState.RUNNING
+        isRunning = true
     }
 
     override fun stop() {
         checkGameScore()
-        state = GameModeState.FINISHED
+        isRunning = false
     }
 
-    override fun cleanup() {
-        state = GameModeState.STOPPED
-    }
+    override fun cleanup() {}
 
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (!isPlayer(event.player) || state != GameModeState.RUNNING) return
+        if (!isPlayer(event.player) || !isRunning) return
 
         val blockLocation = event.to.block.location
-        if (isInDeathZone(blockLocation)) {  // REVIEW die Spawnlocation ist irgendwie falsch
+        if (blockLocation.y < getSpawnLocation().y - 5) {  // REVIEW die Spawnlocation ist irgendwie falsch
             event.player.gameMode = org.bukkit.GameMode.SPECTATOR
             addToDead(event.player)
             playerLoose(event.player) // "x ist ausgeschieden!"
@@ -83,8 +72,7 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         if (blockLocation == event.from.block.location) return
 
         val materialsToReplace = arrayOf(Material.TNT, Material.SAND, Material.GRAVEL)
-        blockLocation.subtract(0.0, 2.0, 0.0)
-        // blockLocation.subtract(0.0, 1.0, 0.0)
+        blockLocation.subtract(0.0, 1.0, 0.0)
 
         val world = event.player.location.world
         if (world.getBlockAt(blockLocation).type !in materialsToReplace) return
@@ -92,29 +80,14 @@ class TNTRun(private val framework: Framework) : GameMode(framework) {
         val fuxelSagt = framework.getFuxelSagt()
         fuxelSagt.server.scheduler.runTaskLater(fuxelSagt, Runnable {
             world.getBlockAt(blockLocation).type = Material.AIR
-            //world.spawn(blockLocation.add(0.5, -0.5, 0.5), TNTPrimed::class.java)
-            spawnTNT(blockLocation.add(0.5, -0.5, 0.5))
+            world.spawn(blockLocation.add(0.5, -0.5, 0.5), TNTPrimed::class.java)
 //            blockLocation.subtract(0.0, 1.0, 0.0)
 //            world.getBlockAt(blockLocation).type = Material.AIR
         }, 20L)
     }
 
     @EventHandler
-    fun onTNTSandFall(event: EntityMoveEvent) {
-        if(event.entity !is FallingBlock) return
-        if(isInDeathZone(event.entity.location))
-            event.entity.remove()
-    }
-
-    private fun spawnTNT(location: Location){
-        val world = location.world
-        val tnt: FallingBlock = world.spawn(location, FallingBlock::class.java)
-        tnt.blockData = Material.TNT.createBlockData()
-        tnt.cancelDrop = true
-        tnt.dropItem = false
-    }
-
-    private fun isInDeathZone(location: Location): Boolean {
-        return location.y < getSpawnLocation().y - 5
+    fun onTNTexplosion(event: ExplosionPrimeEvent) {
+        event.isCancelled = true
     }
 }
