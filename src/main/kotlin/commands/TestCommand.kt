@@ -1,7 +1,6 @@
 package commands
 
 import FuxelSagt
-import gamemodes.maze.MazeGenerator
 import guis.GameModeSelection
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

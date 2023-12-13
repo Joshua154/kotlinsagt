@@ -219,7 +219,7 @@ abstract class GameMode(private val framework: Framework) : Listener {
 
     open fun cleanup() {}
 
-    fun getSpawnLocation(): Location {
+    open fun getSpawnLocation(): Location {
         return fuxelSagt.server.getWorld(worldName)!!.spawnLocation
     }
 
