@@ -10,12 +10,18 @@ class JoinListener(val fuxelSagt: FuxelSagt) : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        // fuxelsagt.getTablistManager().sendTablistToPlayer(event.player)
-        // playermanager.addPlayer(event.player)
+//        if (event.player.hasPermission("fuxelsagt.spec")) {
+//            fuxelSagt.getFramework().getPlayerManager().addSpectator(event.player)
+//        } else {
+        fuxelSagt.getFramework().getPlayerManager().addPlayer(event.player)
+//        }
+        fuxelSagt.getFramework().getTablistManager().sendTablistToPlayer(event.player)
 
+        Bukkit.getLogger()
+            .info("Players:" + fuxelSagt.getFramework().getPlayerManager().getPlayerUUIDList().toString());
 //        val gui = TeleportGUI(fuxelSagt)
 //        gui.open(event.player)
-        event.getPlayer().teleport(Bukkit.getWorld("world")!!.spawnLocation); // TODO: Replace with proper lobby
+        event.player.teleport((Bukkit.getWorld("world") ?: return).spawnLocation); // TODO: Replace with proper lobby
     }
 
 }

@@ -1,9 +1,8 @@
 package framework.configuration
 
-import framework.gamemodes.GameMode
+import framework.gamemode.GameMode
 import org.bukkit.Material
 import java.lang.reflect.Field
-import java.lang.reflect.ParameterizedType
 
 
 class ConfigurableValueInterface<T : Any> {
@@ -23,10 +22,7 @@ class ConfigurableValueInterface<T : Any> {
         this.material = material;
         this.defaultValue = defaultValue;
         this.field = field;
-        this.clazz =
-            (this::class.java.getGenericSuperclass() as ParameterizedType).getActualTypeArguments()[0] as Class<T>;
-
-        if (this.field.type != this.clazz) throw IllegalArgumentException("The type of the provided filed has to match the generic type of this class! (f:" + this.field.type.name + " != c:" + this.clazz.name + ")");
+        this.clazz = defaultValue.javaClass;
 
         this.type = Type.fromClass(this.clazz)!!;
     }
@@ -68,11 +64,11 @@ class ConfigurableValueInterface<T : Any> {
         companion object {
             fun fromClass(clazz: Class<out Any>): Type? {
                 return when (clazz) {
-                    Short::class.java -> INTEGER
-                    Integer::class.java -> INTEGER
-                    Long::class.java -> INTEGER
-                    Float::class.java -> FLOAT
-                    Double::class.java -> FLOAT
+                    Short::class.java, java.lang.Short.TYPE -> INTEGER
+                    Integer::class.java, java.lang.Integer.TYPE -> INTEGER
+                    Long::class.java, java.lang.Long.TYPE -> INTEGER
+                    Float::class.java, java.lang.Float.TYPE -> FLOAT
+                    Double::class.java, java.lang.Double.TYPE -> FLOAT
                     String::class.java -> STRING
                     else -> null
                 }

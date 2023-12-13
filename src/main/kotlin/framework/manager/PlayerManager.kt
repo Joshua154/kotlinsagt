@@ -7,28 +7,45 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class PlayerManager(private val framework: Framework) {
-    private var players = ArrayList<UUID>()
-    private var spectators = ArrayList<UUID>()
+    private val players: MutableSet<UUID> = mutableSetOf()
+    private var spectators: MutableSet<UUID> = mutableSetOf()
     private var fuxel: Optional<UUID> = Optional.empty()
 
+    fun uuidToPlayer(uuid: UUID): Player? {
+        return framework.getFuxelSagt().server.getPlayer(uuid)
+    }
+
+    // SETTER
     fun setFuxel(uuid: UUID) {
         this.fuxel = Optional.of(uuid)
     }
 
-    fun addPlayer(uuid: UUID) {
+    fun setPlayer(uuid: UUID) {
+        this.spectators.remove(uuid)
         this.players.add(uuid)
     }
 
+    fun setSpectator(uuid: UUID): Boolean {
+        this.players.remove(uuid)
+        return this.spectators.add(uuid)
+    }
+
+    // GETTER
+    fun getPlayerUUIDList(): Set<UUID> {
+        return players
+    }
+
+    fun getPlayerList(): Set<Player?> {
+        return players.map { framework.getFuxelSagt().server.getPlayer(it) }.toSet()
+    }
+
+    // ADDER
     fun addPlayer(player: Player) {
         this.players.add(player.uniqueId)
     }
 
-    fun isPlayer(uuid: UUID): Boolean {
-        return this.players.contains(uuid)
-    }
-
-    fun isPlayer(player: Player): Boolean {
-        return this.players.contains(player.uniqueId)
+    fun addPlayer(uuid: UUID) {
+        this.players.add(uuid)
     }
 
     fun addSpectator(player: UUID) {
@@ -39,17 +56,10 @@ class PlayerManager(private val framework: Framework) {
         this.spectators.add(player.uniqueId)
     }
 
-    fun isSpectator(uuid: UUID): Boolean {
-        return this.spectators.contains(uuid)
-    }
-
-    fun isSpectator(player: Player): Boolean {
-        return this.spectators.contains(player.uniqueId)
-    }
-
-    fun setSpectator(uuid: UUID): Boolean {
-        this.players.remove(uuid)
-        return this.spectators.add(uuid)
+    // CHECKER
+    fun isFuxel(player: Player): Boolean {
+        if (this.fuxel.isEmpty) return false
+        return player.uniqueId == this.fuxel.get()
     }
 
     fun isFuxel(uuid: UUID): Boolean {
@@ -57,11 +67,23 @@ class PlayerManager(private val framework: Framework) {
         return uuid == this.fuxel.get()
     }
 
-    fun isFuxel(player: Player): Boolean {
-        if (this.fuxel.isEmpty) return false
-        return player.uniqueId == this.fuxel.get()
+    fun isPlayer(player: Player): Boolean {
+        return this.players.contains(player.uniqueId)
     }
 
+    fun isPlayer(uuid: UUID): Boolean {
+        return this.players.contains(uuid)
+    }
+
+    fun isSpectator(player: Player): Boolean {
+        return this.spectators.contains(player.uniqueId)
+    }
+
+    fun isSpectator(uuid: UUID): Boolean {
+        return this.spectators.contains(uuid)
+    }
+
+    // OTHER GETTER
     fun getFormat(player: Player): Component {
         val text: String = when {
             isFuxel(player) -> Colors.FUXEL.prefix + player.name + Colors.FUXEL.suffix
@@ -81,8 +103,7 @@ class PlayerManager(private val framework: Framework) {
         }
     }
 
-    // Worker-Methods
-
+    // MANAGER
     fun playerLoose(player: Player) {
         if (!this.players.remove(player.uniqueId)) return;
         this.spectators.add(player.uniqueId)
