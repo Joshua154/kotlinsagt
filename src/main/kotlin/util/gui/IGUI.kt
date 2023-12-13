@@ -2,14 +2,14 @@ package util.gui
 
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
 
 interface IGUI : InventoryHolder {  // Interface Graphical User Interface
-
-    fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType, inventory: Inventory)
+    fun onClick(event: InventoryClickEvent)
 
     fun open(player: Player)
 

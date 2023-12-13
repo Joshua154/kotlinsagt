@@ -13,10 +13,11 @@ class GUIEventHandler : Listener {  // Graphical User Interface Event Handler
         if (event.clickedInventory == null || event.clickedInventory!!.holder is Player) return
         if (event.getCurrentItem() == null) return
         event.isCancelled = true
-        igui.onClick(
-            event.whoClicked as Player, event.rawSlot, event.getCurrentItem(),
-            event.click,
-            event.inventory
-        )
+//        igui.onClick(
+//            event.whoClicked as Player, event.rawSlot, event.getCurrentItem(),
+//            event.click,
+//            event.inventory
+//        )
+        igui.onClick(event)
     }
 }

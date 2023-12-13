@@ -6,6 +6,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -91,8 +92,10 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
         return inventory
     }
 
-    override fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType, inventory: Inventory) {
-        if (clickedItem == null) return
+    override fun onClick(event: InventoryClickEvent) {
+        val player: Player = event.whoClicked as Player
+        val clickedItem: ItemStack = event.currentItem ?: return
+
         val itemMeta = clickedItem.itemMeta
         val container = itemMeta.persistentDataContainer
         if (container.has(getPageGUIKey("type"))) {
@@ -102,7 +105,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
             }
         }
 
-        onItemClick(player, slot, clickedItem, clickType)
+        onItemClick(event)
         this.update(player, inventory);
     }
 
@@ -122,7 +125,7 @@ abstract class PageGUI(private val guiTitle: Component = Component.text("Name no
 
     abstract fun getContent(): List<ItemStack>
 
-    abstract fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType)
+    abstract fun onItemClick(event: InventoryClickEvent)
 
     open fun onPageSwitch() {
         return

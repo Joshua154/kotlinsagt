@@ -9,6 +9,7 @@ import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import util.item.ItemBuilder
@@ -37,8 +38,12 @@ class TextInputBasedConfiguratorGUI<T : Any>(value: ConfigurableValueInterface<T
         );
     }
 
-    override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-        super.onItemClick(player, slot, clickedItem, clickType);
+    override fun onItemClick(event: InventoryClickEvent) {
+        super.onItemClick(event)
+
+        val player: Player = event.whoClicked as Player
+        val clickedItem: ItemStack? = event.currentItem
+
         when (clickedItem?.type) {
             Material.OAK_SIGN -> {
                 val builder: AnvilGUI.Builder = AnvilGUI.Builder();

@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import util.gui.StaticGUI
 import util.item.ItemBuilder
@@ -26,7 +27,10 @@ abstract class ConfiguratorGUI<T : Any>(val value: ConfigurableValueInterface<T>
         this.configuredValue = value;
     }
 
-    override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
+    override fun onItemClick(event: InventoryClickEvent) {
+        val player: Player = event.whoClicked as Player
+        val clickedItem: ItemStack? = event.currentItem
+
         when (clickedItem?.type) {
             Material.BARRIER -> {
                 afterThat.accept(player);

@@ -10,6 +10,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import util.item.ItemBuilder
 import java.util.function.Consumer
@@ -34,8 +35,11 @@ class BooleanValueConfigurator(value: ConfigurableValueInterface<Boolean>) : Val
                         TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.AQUA)).build());
             }
 
-            override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-                super.onItemClick(player, slot, clickedItem, clickType);
+            override fun onItemClick(event: InventoryClickEvent) {
+                super.onItemClick(event)
+
+                val clickedItem: ItemStack? = event.currentItem
+
                 when (clickedItem?.type) {
                     Material.RED_STAINED_GLASS_PANE, Material.LIME_STAINED_GLASS_PANE -> {
                         val item: ItemStack = this.getItem(12)!!;

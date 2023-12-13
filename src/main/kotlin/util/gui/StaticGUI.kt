@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.util.function.Function
@@ -28,9 +29,13 @@ abstract class StaticGUI(private val title: Component = Component.text("Name not
         this.populateInventory(inventory);
     }
 
-    override fun onClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType, inventory: Inventory) {
-        if (clickedItem == null) return;
-        onItemClick(player, slot, clickedItem, clickType);
+    override fun onClick(event: InventoryClickEvent) {
+        event.currentItem ?: return
+
+        val player: Player = event.whoClicked as Player
+        val inventory: Inventory = event.inventory
+
+        onItemClick(event);
         update(player, inventory)
     }
 
@@ -41,7 +46,7 @@ abstract class StaticGUI(private val title: Component = Component.text("Name not
         this.player = player;
     }
 
-    abstract fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType);
+    abstract fun onItemClick(event: InventoryClickEvent);
 
     override fun populateInventory(inventory: Inventory) {
         this.items.forEach { (slot, item) -> inventory.setItem(slot, item)};

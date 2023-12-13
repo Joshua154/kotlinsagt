@@ -13,6 +13,7 @@ import util.gui.StaticGUI
 import util.item.ItemBuilder
 import java.util.function.Consumer
 import framework.configuration.configurator.gui.ConfiguratorGUI;
+import org.bukkit.event.inventory.InventoryClickEvent
 
 class Integer64ValueConfigurator(value: ConfigurableValueInterface<Int>) : ValueConfigurator<Int>(value) {
 
@@ -31,20 +32,25 @@ class Integer64ValueConfigurator(value: ConfigurableValueInterface<Int>) : Value
                 this.setItem(14, ItemBuilder(Material.DIAMOND).setName(Component.text("Zurücksetzen (" + value.getDefaultValue() + ")").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.AQUA)).build());
             }
 
-            override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-                super.onItemClick(player, slot, clickedItem, clickType);
+            override fun onItemClick(event: InventoryClickEvent) {
+                super.onItemClick(event);
+
+                val p: Player = event.whoClicked as Player
+                val clickedItem: ItemStack? = event.currentItem
+                val clickType: ClickType = event.click
+
                 when (clickedItem?.type) {
                     Material.OAK_SIGN -> {
                         if (clickType.isLeftClick) {
                             if (clickedItem.amount == 64) {
-                                player.sendMessage(Component.text("Das Maximum für diese Einstellungsmöglichkeit ist 64.").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.RED))
+                                p.sendMessage(Component.text("Das Maximum für diese Einstellungsmöglichkeit ist 64.").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.RED))
                                 return;
                             }
                             this.getItem(12)?.amount = clickedItem.amount + 1;
                             this.updateConfiguredValue(clickedItem.amount + 1);
                         } else if (clickType.isRightClick) {
                             if (clickedItem.amount == 1) {
-                                player.sendMessage(Component.text("Das Minimum für diese Einstellungsmöglichkeit ist 1.").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.RED))
+                                p.sendMessage(Component.text("Das Minimum für diese Einstellungsmöglichkeit ist 1.").decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).color(NamedTextColor.RED))
                                 return;
                             }
                             this.getItem(12)?.amount = clickedItem.amount - 1;

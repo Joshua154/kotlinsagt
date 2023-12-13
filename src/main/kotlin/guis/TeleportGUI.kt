@@ -6,6 +6,7 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import util.gui.PageGUI
 import util.item.ItemBuilder
@@ -29,8 +30,10 @@ class TeleportGUI(val fuxelSagt: FuxelSagt) : PageGUI(Component.text("Teleporter
 //        return Material.entries.filter { material: Material -> material.isItem }.map { material: Material -> ItemStack(material) }
     }
 
-    override fun onItemClick(player: Player, slot: Int, clickedItem: ItemStack?, clickType: ClickType) {
-        if (clickedItem == null) return
+    override fun onItemClick(event: InventoryClickEvent) {
+        val player: Player = event.whoClicked as Player
+        val clickedItem: ItemStack = event.currentItem ?: return
+
         val container = clickedItem.itemMeta.persistentDataContainer
         val key: NamespacedKey = getPageGUIKey("player_name")
         if (container.has(key) && container.get(key, UUIDDataType()) != null) {
